@@ -11,9 +11,9 @@ export default function NavBar() {
   };
 
   return (
-    <div className="">
+    <div className="bg-[#211a37]">
       {/* NavBar */}
-      <div className=" px-[100px] py-[40px] flex justify-between">
+      <div className=" px-[50px] sm:px-[100px] py-[40px] flex justify-between">
         <div>
           <h1>Logo</h1>
         </div>
