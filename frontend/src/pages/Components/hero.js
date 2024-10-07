@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Hero() {
   return (
-    <div className="bg-[#211a37]">
+    <div className="bg-[#17123d]">
       {/* Hero */}
       <div className="px-[50px] text-center sm:px-[100px]">
         
@@ -15,7 +15,7 @@ export default function Hero() {
             NFT Minting Platform for Community Certificates, Awards, and Tickets
             and more
           </p>
-          <div className="flex justify-center space-x-4 text-[10px] sm:text-[16px]   pt-[30px] mx-6">
+          <div className="flex justify-center space-x-4 text-[15px] sm:text-[20px]   pt-[30px] mx-6">
             <Link href="/Mint">
             <button className="rounded-lg bg-[#8381d5]  px-4 py-3">Mint</button>
             </Link>

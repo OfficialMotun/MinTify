@@ -11,7 +11,7 @@ export default function NavBar() {
   };
 
   return (
-    <div className="bg-[#211a37]">
+    <div className="bg-[#17123d]">
       {/* NavBar */}
       <div className=" px-[50px] sm:px-[100px] py-[40px] flex justify-between">
         <div>
@@ -20,7 +20,9 @@ export default function NavBar() {
           </Link>
         </div>
         <div className="hidden sm:text-[#b2b0c6] sm:flex justify-center cursor-pointer gap-5">
+          <Link href="/">
           <h1>Home</h1>
+          </Link>
           <h1>Dashboard</h1>
           <h1>Features</h1>
         </div>

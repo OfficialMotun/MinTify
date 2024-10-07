@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
     return (
       <div className="bg-[#353747] py-10">
@@ -13,7 +15,9 @@ export default function Footer() {
           </div>
 
           <div className="pt-[40px] sm:pt-[0px]">
+            <Link   href="/">
             Logo
+            </Link>
           </div>
   
         </div>
