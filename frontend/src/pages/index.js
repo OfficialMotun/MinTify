@@ -9,9 +9,7 @@ export default function Home() {
     <div
       className=""
     >
-      {/* hero */}
       <div >
-      
         <Hero />
         <Features />
       </div>

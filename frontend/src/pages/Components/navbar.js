@@ -15,7 +15,9 @@ export default function NavBar() {
       {/* NavBar */}
       <div className=" px-[50px] sm:px-[100px] py-[40px] flex justify-between">
         <div>
+        <Link href="/">
           <h1>Logo</h1>
+          </Link>
         </div>
         <div className="hidden sm:text-[#b2b0c6] sm:flex justify-center cursor-pointer gap-5">
           <h1>Home</h1>
@@ -55,25 +57,25 @@ export default function NavBar() {
           
 
           <h3 className="text-white text-sm font-normal leading-none">
-          <Link href="/explore">
+          <Link href="/">
                   <button>Dashboard</button>
                 </Link>
           </h3>
           
           <h3 className="text-white text-sm font-normal leading-none">
-                <Link href="/about-us">
+                <Link href="/">
                   <button>Features</button>
                 </Link>
           </h3>
 
 
-          <Link href="/SignIn">
+         
             <div className="flex">
               <button className="">
                 Connect Wallet
               </button>
             </div>
-          </Link>
+         
         </div>
       )}
     </div>
