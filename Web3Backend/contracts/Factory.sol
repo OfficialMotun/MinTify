@@ -5,14 +5,16 @@ import "./Mintify.sol";
 import {MintifyEvent} from "./Utils/Utils.sol";
 
 
+
 contract MintifyFactory {
-    
+mapping (address => string ) public contractToCid;
 
     function createMintify(
         address owner,
         string memory name,
         string memory symbol,
-        bytes32 merkleRoot
+        bytes32 merkleRoot,
+        string memory CsvCid
     ) external returns (address) {
         Mintify newMintify = new Mintify(
             owner,
@@ -21,8 +23,12 @@ contract MintifyFactory {
             merkleRoot
         );
 
-        emit MintifyEvent.MintifyCreated(address(newMintify), owner, name, symbol);
+        address contractAddress = address(newMintify);
 
-        return address(newMintify);
+        contractToCid[contractAddress] = CsvCid;
+
+        emit MintifyEvent.MintifyCreated(contractAddress, owner, name, symbol);
+
+        return contractAddress ;
     }
 }
