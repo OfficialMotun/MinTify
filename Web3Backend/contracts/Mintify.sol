@@ -1,92 +1,58 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+    // SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.27;
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
-import "@openzeppelin/contracts/utils/Base64.sol";
+import "node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
 
-contract MerkleNFTMint is ERC1155, Ownable {
-    using Strings for uint256;
+import {MintifyError, MintifyEvent} from "./Utils/Utils.sol";
 
-    bytes32 public merkleRoot;
-    mapping(address => bool) public hasClaimed;
-    uint256 public mintPrice = 0.1 ether; // Set your desired mint price here
-    uint256 public nextTokenId = 1;
+contract Mintify is ERC721, ERC721URIStorage, ERC721Pausable {
+    /* ========== State Variable ========== */
+    address immutable owner;
 
-    event Minted(address indexed to, uint256 indexed tokenId, string tokenURI);
-    event MerkleRootUpdated(bytes32 newMerkleRoot);
-
-    constructor(string memory _uri, bytes32 _merkleRoot) ERC1155(_uri) Ownable(msg.sender) {
-        merkleRoot = _merkleRoot;
+    constructor(address _owner, string memory _name, string memory _symbol) ERC721(_name, _symbol) {
+        owner = _owner;
     }
 
-    function claim(
-        bytes32[] calldata _merkleProof
-    ) external payable returns (bool success) {
-        require(!hasClaimed[msg.sender], "Already claimed");
-        require(msg.value >= mintPrice, "Insufficient payment");
+    // function _baseURI() internal pure override returns (string memory) {
+    //     return "htt";
+    // }
 
-        bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
-        require(MerkleProof.verify(_merkleProof, merkleRoot, leaf), "Not eligible");
-
-        hasClaimed[msg.sender] = true;
-        _mint(msg.sender, nextTokenId, 1, "");
-        
-        emit Minted(msg.sender, nextTokenId, uri(nextTokenId));
-        nextTokenId++;
-
-        success = true;
+    function pause() external {
+        _onlyOwner();
+        _pause();
     }
 
-    function formatTokenURI(
-        string memory imageURI,
-        string memory name,
-        string memory description
-    ) public pure returns (string memory) {
-        return string(
-            abi.encodePacked(
-                "data:application/json;base64,",
-                Base64.encode(
-                    bytes(
-                        abi.encodePacked(
-                            '{"name":"', name, '", ',
-                            '"description":"', description, '", ',
-                            '"image":"', imageURI, '"}'
-                        )
-                    )
-                )
-            )
-        );
+    function unpause() external {
+        _onlyOwner();
+        _unpause();
     }
 
-    function mint(
-        string memory imageURI,
-        string memory name,
-        string memory description
-    ) external payable {
-        require(msg.value >= mintPrice, "Insufficient payment");
-
-        string memory tokenURI = formatTokenURI(imageURI, name, description);
-        _mint(msg.sender, nextTokenId, 1, "");
-        emit Minted(msg.sender, nextTokenId, tokenURI);
-        nextTokenId++;
+    function safeMint(address to, uint256 tokenId, string memory uri) external {
+        _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
     }
 
-    function updateMerkleRoot(bytes32 _newMerkleRoot) external onlyOwner {
-        merkleRoot = _newMerkleRoot;
-        emit MerkleRootUpdated(_newMerkleRoot);
+    function _onlyOwner() private view {
+        require(msg.sender == owner, MintifyError.NotOwner());
     }
 
-    function getContractBalance() external view returns (uint256) {
-        return address(this).balance;
+    // The following functions are overrides required by Solidity.
+
+    function _update(address to, uint256 tokenId, address auth)
+        internal
+        override(ERC721, ERC721Pausable)
+        returns (address)
+    {
+        return super._update(to, tokenId, auth);
     }
 
-    function withdraw() external onlyOwner {
-        uint256 balance = address(this).balance;
-        require(balance > 0, "No balance to withdraw");
-        (bool sent, ) = payable(owner()).call{value: balance}("");
-        require(sent, "Failed to send Ether");
+    function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage) returns (bool) {
+        return super.supportsInterface(interfaceId);
     }
 }
