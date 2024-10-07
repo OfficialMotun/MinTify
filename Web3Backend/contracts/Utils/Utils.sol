@@ -15,4 +15,5 @@ library MintifyError {
 
 library MintifyEvent {
     event MintedNft(address indexed ContractAddress, address indexed claimer, uint256 indexed tokenID);
+    event MintifyCreated(address indexed mintifyAddress, address indexed owner, string name, string symbol);
 }

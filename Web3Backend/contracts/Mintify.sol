@@ -37,6 +37,8 @@ contract Mintify is ERC721, ERC721URIStorage, ERC721Pausable {
     //     _onlyOwner();
     //     _unpause();
     // }
+
+    /* ========== Mutation Functions ========== */
     function mint(bytes32[] calldata proof, uint256 index, string memory uri) external {
         // check if already Minted
         require(mintCheckList[msg.sender] == false, MintifyError.AlreadyMinted());
@@ -59,9 +61,11 @@ contract Mintify is ERC721, ERC721URIStorage, ERC721Pausable {
         _onlyOwner();
         merkleRoot = _newMerkleroot;
 
-        
+
     }
 
+
+/* ========== Internal Functions ========== */
     function _verifyProof(bytes32[] memory proof, uint256 tokenId, address addr) private view {
         // the whole reason for double hashing to prevent something called preimage attack read more  here (https:/medium.com/rareskills/the-second-preimage-attack-for-merkle-trees-in-solidity-e9d74fe7fdcd)
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(addr, tokenId))));
