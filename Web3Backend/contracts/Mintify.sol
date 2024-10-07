@@ -1,92 +1,98 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+    // SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.27;
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
-import "@openzeppelin/contracts/utils/Base64.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
+import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
-contract MerkleNFTMint is ERC1155, Ownable {
-    using Strings for uint256;
+import {MintifyError, MintifyEvent} from "./Utils/Utils.sol";
 
+contract Mintify is ERC721, ERC721URIStorage, ERC721Pausable {
+    /* ========== State Variable ========== */
+    address public immutable owner;
+    // the merkle tree root
     bytes32 public merkleRoot;
-    mapping(address => bool) public hasClaimed;
-    uint256 public mintPrice = 0.1 ether; // Set your desired mint price here
-    uint256 public nextTokenId = 1;
 
-    event Minted(address indexed to, uint256 indexed tokenId, string tokenURI);
-    event MerkleRootUpdated(bytes32 newMerkleRoot);
+    // a mapping to keep track of the Mint state of a particular address
+    mapping(address => bool) mintCheckList;
 
-    constructor(string memory _uri, bytes32 _merkleRoot) ERC1155(_uri) Ownable(msg.sender) {
+    constructor(address _owner, string memory _name, string memory _symbol, bytes32 _merkleRoot)
+        ERC721(_name, _symbol)
+    {
         merkleRoot = _merkleRoot;
+        owner = _owner;
     }
 
-    function claim(
-        bytes32[] calldata _merkleProof
-    ) external payable returns (bool success) {
-        require(!hasClaimed[msg.sender], "Already claimed");
-        require(msg.value >= mintPrice, "Insufficient payment");
+    // function _baseURI() internal pure override returns (string memory) {
+    //     return "htt";
+    // }
 
-        bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
-        require(MerkleProof.verify(_merkleProof, merkleRoot, leaf), "Not eligible");
+    // function pause() external {
+    //     _onlyOwner();
+    //     _pause();
+    // }
 
-        hasClaimed[msg.sender] = true;
-        _mint(msg.sender, nextTokenId, 1, "");
-        
-        emit Minted(msg.sender, nextTokenId, uri(nextTokenId));
-        nextTokenId++;
+    // function unpause() external {
+    //     _onlyOwner();
+    //     _unpause();
+    // }
 
-        success = true;
+    /* ========== Mutation Functions ========== */
+    function mint(bytes32[] calldata proof, uint256 index, string memory uri) external {
+        // check if already Minted
+        require(mintCheckList[msg.sender] == false, MintifyError.AlreadyMinted());
+
+        // verifing   the proof
+        _verifyProof(proof, index, msg.sender);
+
+        // set status to  Minted
+        mintCheckList[msg.sender] = true;
+
+        _safeMint(msg.sender, index);
+        _setTokenURI(index, uri);
+
+        emit MintifyEvent.MintedNft(address(this), msg.sender, index);
     }
 
-    function formatTokenURI(
-        string memory imageURI,
-        string memory name,
-        string memory description
-    ) public pure returns (string memory) {
-        return string(
-            abi.encodePacked(
-                "data:application/json;base64,",
-                Base64.encode(
-                    bytes(
-                        abi.encodePacked(
-                            '{"name":"', name, '", ',
-                            '"description":"', description, '", ',
-                            '"image":"', imageURI, '"}'
-                        )
-                    )
-                )
-            )
-        );
+   
+
+    function updateMerkleRoot(bytes32 _newMerkleroot) external {
+        _onlyOwner();
+        merkleRoot = _newMerkleroot;
+
+
     }
 
-    function mint(
-        string memory imageURI,
-        string memory name,
-        string memory description
-    ) external payable {
-        require(msg.value >= mintPrice, "Insufficient payment");
 
-        string memory tokenURI = formatTokenURI(imageURI, name, description);
-        _mint(msg.sender, nextTokenId, 1, "");
-        emit Minted(msg.sender, nextTokenId, tokenURI);
-        nextTokenId++;
+/* ========== Internal Functions ========== */
+    function _verifyProof(bytes32[] memory proof, uint256 tokenId, address addr) private view {
+        // the whole reason for double hashing to prevent something called preimage attack read more  here (https:/medium.com/rareskills/the-second-preimage-attack-for-merkle-trees-in-solidity-e9d74fe7fdcd)
+        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(addr, tokenId))));
+
+        // checks if the proof is valid
+        require(MerkleProof.verify(proof, merkleRoot, leaf), MintifyError.InvalidProof());
     }
 
-    function updateMerkleRoot(bytes32 _newMerkleRoot) external onlyOwner {
-        merkleRoot = _newMerkleRoot;
-        emit MerkleRootUpdated(_newMerkleRoot);
+    function _onlyOwner() private view {
+        require(msg.sender == owner, MintifyError.NotOwner());
     }
 
-    function getContractBalance() external view returns (uint256) {
-        return address(this).balance;
+    // The following functions are overrides required by Solidity.
+
+    function _update(address to, uint256 tokenId, address auth)
+        internal
+        override(ERC721, ERC721Pausable)
+        returns (address)
+    {
+        return super._update(to, tokenId, auth);
     }
 
-    function withdraw() external onlyOwner {
-        uint256 balance = address(this).balance;
-        require(balance > 0, "No balance to withdraw");
-        (bool sent, ) = payable(owner()).call{value: balance}("");
-        require(sent, "Failed to send Ether");
+    function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721URIStorage) returns (bool) {
+        return super.supportsInterface(interfaceId);
     }
 }
