@@ -6,7 +6,7 @@ library MintifyError {
 
     error AlreadyMinted();
 
-    error ClaimingEnded();
+    error WithdrawFailed();
 
     error InvalidProof();
 
