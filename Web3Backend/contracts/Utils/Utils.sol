@@ -4,7 +4,7 @@ pragma solidity 0.8.27;
 library MintifyError {
     error NotOwner();
 
-    error AlreadyClaimed();
+    error AlreadyMinted();
 
     error ClaimingEnded();
 
@@ -14,5 +14,5 @@ library MintifyError {
 }
 
 library MintifyEvent {
-    event claimedAirDrop(address indexed ContractAddress, address indexed claimer, uint256 indexed tokenID);
+    event MintedNft(address indexed ContractAddress, address indexed claimer, uint256 indexed tokenID);
 }
