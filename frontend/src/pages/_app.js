@@ -9,6 +9,7 @@ import { Playfair_Display } from "next/font/google";
 import { http, createConfig } from 'wagmi';
 import { baseSepolia } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
+import { MintifyProvider } from "./Context/mintifyContext";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],

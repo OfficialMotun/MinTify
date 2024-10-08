@@ -5,6 +5,8 @@ import Link from "next/link";
 import {
   WalletDefault
 } from "@coinbase/onchainkit/wallet";
+import { base } from 'viem/chains';
+
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,8 +15,9 @@ export default function NavBar() {
     setIsOpen(!isOpen);
   };
 
+  // style={{ backgroundImage: "url('cover.png')" }}
   return (
-    <div  className="bg-[#17123d] relative brightness-150 bg-blend-hue" style={{ backgroundImage: "url('cover.png')" }}>
+    <div  className="bg-[#17123d] relative brightness-150 bg-blend-hue" >
       {/* NavBar */}
       <div className=" px-[50px] sm:px-[100px] py-[40px] flex justify-between">
         <div>
@@ -30,7 +33,7 @@ export default function NavBar() {
           <h1>Features</h1>
         </div>
 
-        <div className="hidden sm:grid">
+        <div className="grid">
         <WalletDefault />
         </div>
 

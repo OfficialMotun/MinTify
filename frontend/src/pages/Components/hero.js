@@ -1,9 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
+import { MintifyContext } from "../Context/mintifyContext";
 
 export default function Hero() {
+  const { address } = useContext(MintifyContext);
   return (
-    <div className="bg-[#17123d] relative brightness-150 bg-blend-hue" style={{ backgroundImage: "url('cover.png')" }}>
+    // style={{ backgroundImage: "url('cover.png')" }}
+    <div className="bg-[#17123d] relative brightness-150 bg-blend-hue" >
       {/* Hero */}
       <div className="px-[50px] text-center sm:px-[100px]"  >
         
@@ -30,6 +33,7 @@ export default function Hero() {
         </div>
 
       </div>
+      <ToastContainer />
     </div>
   );
 }

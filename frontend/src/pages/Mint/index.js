@@ -2,6 +2,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { FileIcon } from '@radix-ui/react-icons';
 
+
 export default function Mint() {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState("");
@@ -185,7 +186,9 @@ export default function Mint() {
             </button>
           </div>
         </form>
+       
       </div>
+      
     </div>
   );
 }
