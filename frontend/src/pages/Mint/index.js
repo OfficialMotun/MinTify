@@ -36,9 +36,23 @@ export default function Mint() {
 
   return (
     <div className="">
-      <div className="relativew-full h-full">
-        <Image src="/bg.png" alt="hero" width={2000} height={1000} />
+       <div className="bg-[#17123d] relative brightness-150 bg-blend-hue" style={{ backgroundImage: "url('cover.png')" }}>
+      {/* Hero */}
+      <div className="px-[50px] py-[50px]  text-center sm:px-[100px]"  >
+        
+        
+        <div className="grid ">
+          <h1 className="text-[45px] pt-[20px] text-[30px] sm:text-[40px] font-extrabold"> Empowering Communities, <br /> Celebrating Achievements!</h1>
+
+          <p className="py-4 text-[#b2b0c6] text-[10px] sm:text-[13px] ">
+            NFT Minting Platform for Community Certificates, Awards, and Tickets
+            and more
+          </p>
+         
+        </div>
+
       </div>
+    </div>
 
       <h2 className="font-semibold	text-[36px] text-center py-[100px]">Mint</h2>
 
