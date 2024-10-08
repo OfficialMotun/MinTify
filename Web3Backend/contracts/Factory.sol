@@ -2,22 +2,25 @@
 pragma solidity 0.8.27;
 
 import "./Mintify.sol";
-import {MintifyEvent} from "./Utils/Utils.sol";
+import {MintifyEvent,MintifyError} from "./Utils/Utils.sol";
 
 
 
 contract MintifyFactory {
 mapping (address => string ) public contractToCid;
-
+address payable owner;
+constructor () {
+   owner = payable(msg.sender); 
+}
     function createMintify(
-        address owner,
+        address _owner,
         string memory name,
         string memory symbol,
         bytes32 merkleRoot,
         string memory CsvCid
     ) external returns (address) {
         Mintify newMintify = new Mintify(
-            owner,
+            _owner,
             name,
             symbol,
             merkleRoot
@@ -27,8 +30,14 @@ mapping (address => string ) public contractToCid;
 
         contractToCid[contractAddress] = CsvCid;
 
-        emit MintifyEvent.MintifyCreated(contractAddress, owner, name, symbol);
+        emit MintifyEvent.MintifyCreated(contractAddress, _owner, name, symbol);
 
         return contractAddress ;
     }
+    function deployerWithdraw()  external  {
+        require (msg.sender == owner,MintifyError.NotOwner() );
+        (bool succees,) = owner.call{value: address(this).balance}("");
+        require (succees, MintifyError.WithdrawFailed());
+    }
+    receive () payable external {}
 }
