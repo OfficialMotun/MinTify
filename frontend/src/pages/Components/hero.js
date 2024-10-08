@@ -1,9 +1,43 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MintifyContext } from "../Context/mintifyContext";
+import { useRouter } from 'next/router';
+import { useContext } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Hero() {
   const { address } = useContext(MintifyContext);
+  const router = useRouter();
+
+  const handleButtonMint = (e) => {
+    if (!address) {
+      e.preventDefault();
+      toast.error('Please connect your wallet first!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
+
+  const handleButtonEligibility = (e) => {
+    if (!address) {
+      e.preventDefault();
+      toast.error('Please connect your wallet first!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
+
   return (
     // style={{ backgroundImage: "url('cover.png')" }}
     <div className="bg-[#17123d] relative brightness-150 bg-blend-hue" >
@@ -19,11 +53,11 @@ export default function Hero() {
             and more
           </p>
           <div className="flex justify-center space-x-4 text-[15px] sm:text-[20px]   pt-[30px] mx-6">
-            <Link href="/Mint">
-            <button className="rounded-lg bg-[#8381d5]  px-4 py-3">Mint</button>
+            <Link href="/Mint" passHref>
+            <button onClick={handleButtonMint} className="rounded-lg bg-[#8381d5]  px-4 py-3">Mint</button>
             </Link>
-            <Link href="/Eligibility">
-            <button className="border-solid border-2 border-[#8381d5] rounded-full text-[#b2b0c6] px-2 py-3">Check Eligibility</button>
+            <Link href="/Eligibility" passHref>
+            <button onClick={handleButtonEligibility} className="border-solid border-2 border-[#8381d5] rounded-full text-[#b2b0c6] px-2 py-3">Check Eligibility</button>
             </Link>
           </div>
 
