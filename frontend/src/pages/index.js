@@ -1,7 +1,5 @@
-
 import Hero from "./Components/hero";
 import Features from "./Components/features";
-
 
 
 export default function Home() {
@@ -9,6 +7,7 @@ export default function Home() {
     <div
       className=""
     >
+      
       <div >
         <Hero />
         <Features />

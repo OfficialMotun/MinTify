@@ -2,6 +2,9 @@
 import { useState } from "react";
 import { Cross2Icon, HamburgerMenuIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
+import {
+  WalletDefault
+} from "@coinbase/onchainkit/wallet";
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,7 +14,7 @@ export default function NavBar() {
   };
 
   return (
-    <div className="bg-[#17123d]">
+    <div  className="bg-[#17123d] relative brightness-150 bg-blend-hue" style={{ backgroundImage: "url('cover.png')" }}>
       {/* NavBar */}
       <div className=" px-[50px] sm:px-[100px] py-[40px] flex justify-between">
         <div>
@@ -28,7 +31,7 @@ export default function NavBar() {
         </div>
 
         <div className="hidden sm:grid">
-          <h1>Connect wallet</h1>
+        <WalletDefault />
         </div>
 
         <div className="md:hidden mb-4 ">
@@ -73,9 +76,7 @@ export default function NavBar() {
 
          
             <div className="flex">
-              <button className="">
-                Connect Wallet
-              </button>
+            <WalletDefault />
             </div>
          
         </div>

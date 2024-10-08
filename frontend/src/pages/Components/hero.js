@@ -3,9 +3,9 @@ import Image from "next/image";
 
 export default function Hero() {
   return (
-    <div className="bg-[#17123d]">
+    <div className="bg-[#17123d] relative brightness-150 bg-blend-hue" style={{ backgroundImage: "url('cover.png')" }}>
       {/* Hero */}
-      <div className="px-[50px] text-center sm:px-[100px]">
+      <div className="px-[50px] text-center sm:px-[100px]"  >
         
         
         <div className="grid ">

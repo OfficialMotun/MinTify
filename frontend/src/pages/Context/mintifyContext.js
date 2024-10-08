@@ -1,31 +1,27 @@
 import { useAvatar, useName } from '@coinbase/onchainkit/identity';
 import { useState, createContext } from "react";
+import { baseSepolia } from 'wagmi/chains';
 
-const { data: name, isLoading: nameIsLoading } = await useName({ address, chain: base });
+export const MintifyContext = createContext();
 
-export const BlogContext = createContext();
+export function MintifyProvider({ children }) {
+  const [address, setAddress] = useState(null);
 
-
-export function BlogProvider(props) {
-
-  const [user, setUser] = useState(null);
-  const [picture, setPicture] = useState(null);
-  const [contract_Id, setContract_Id] = useState(null);
-
+  const { data: name, isLoading: nameIsLoading } = useName({ address, chain: baseSepolia });
+  const { data: avatar, isLoading: avatarIsLoading } = useAvatar({ address, chain: baseSepolia });
 
   return (
-    <div>
-      <MintifyContext.Provider
-        value={{
-          user,
-          setUser,
-          picture,
-          setPicture,
-          contract_Id,
-        }}
-        >
-          {props.children}
-        </BlogContext.Provider>
-      </div>
-    );
-  }
+    <MintifyContext.Provider
+      value={{
+        address,
+        setAddress,
+        name,
+        nameIsLoading,
+        avatar,
+        avatarIsLoading,
+      }}
+    >
+      {children}
+    </MintifyContext.Provider>
+  );
+}
