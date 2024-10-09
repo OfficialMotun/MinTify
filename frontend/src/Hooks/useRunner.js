@@ -1,9 +1,9 @@
-import { useAppKitProvider } from "@reown/appkit/react";
+// import { useAppKitProvider } from "@reown/appkit/react";
 import { base } from 'viem/chains';
 import { OnchainKitProvider } from '@coinbase/onchainkit';
 import { BrowserProvider } from "ethers";
 import { useEffect, useMemo, useState } from "react";
-import { jsonRpcProvider } from "../constants/provider";
+import { jsonRpcProvider } from "../Constants/provider";
 
 const useRunners = () => {
     const [signer, setSigner] = useState();
