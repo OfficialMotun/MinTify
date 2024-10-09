@@ -1,4 +1,3 @@
-import { useContext, useCallback } from 'react';
 import {
   ConnectWallet,
   Wallet,
@@ -10,12 +9,13 @@ import {
   Avatar,
   Name,
   Identity,
+  EthBalance,
 } from '@coinbase/onchainkit/identity';
-import { color } from '@coinbase/onchainkit/theme';
-import  { MintifyContext } from '../Context/mintifyContext';
+import { base } from 'wagmi/chains';
+import { useMintifyContext } from '../../Context/mintifyContext';
 export default function WalletComponent() {
   
-  const { address } = useContext(MintifyContext);
+  const { address } = useMintifyContext();
 
   
 

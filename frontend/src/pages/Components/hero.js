@@ -1,15 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
-import { MintifyContext } from "../Context/mintifyContext";
-import { useRouter } from 'next/router';
-import { useContext } from "react";
+import { useMintifyContext } from "../../Context/mintifyContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function Hero() {
-  const { address } = useContext(MintifyContext);
-  const router = useRouter();
-
+  const { address } = useMintifyContext();
+ 
   const handleButtonMint = (e) => {
     if (!address) {
       e.preventDefault();

@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   WalletDefault
 } from "@coinbase/onchainkit/wallet";
-import { base } from 'viem/chains';
 
 
 export default function NavBar() {
