@@ -36,8 +36,8 @@ export default function Hero() {
   };
 
   return (
-    // style={{ backgroundImage: "url('cover.png')" }}
-    <div className="bg-[#17123d] relative brightness-150 bg-blend-hue" >
+    
+    <div className="relative bg-blend-multiply bg-la" style={{ backgroundImage: "url('Desktop.png')" }} >
       {/* Hero */}
       <div className="px-[50px] text-center sm:px-[100px]"  >
         
@@ -49,12 +49,12 @@ export default function Hero() {
             NFT Minting Platform for Community Certificates, Awards, and Tickets
             and more
           </p>
-          <div className="flex justify-center space-x-4 text-[15px] sm:text-[20px]   pt-[30px] mx-6">
+          <div className="flex justify-center space-x-4 text-[15px] sm:text-[20px] text-white  pt-[30px] mx-6">
             <Link href="/Mint" passHref>
             <button onClick={handleButtonMint} className="rounded-lg bg-[#8381d5]  px-4 py-3">Mint</button>
             </Link>
             <Link href="/Eligibility" passHref>
-            <button onClick={handleButtonEligibility} className="border-solid border-2 border-[#8381d5] rounded-full text-[#b2b0c6] px-2 py-3">Check Eligibility</button>
+            <button onClick={handleButtonEligibility} className="border-solid border-2 border-[#8381d5] rounded-full text-white px-2 py-3">Check Eligibility</button>
             </Link>
           </div>
 

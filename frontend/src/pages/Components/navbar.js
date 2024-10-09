@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   WalletDefault
 } from "@coinbase/onchainkit/wallet";
+import Image from "next/image";
 
 
 export default function NavBar() {
@@ -14,14 +15,14 @@ export default function NavBar() {
     setIsOpen(!isOpen);
   };
 
-  // style={{ backgroundImage: "url('cover.png')" }}
+
   return (
-    <div  className="bg-[#17123d] relative brightness-150 bg-blend-hue" >
+    <div  className="bg-[#17123d] relative " style={{ backgroundImage: "url('Desktop.png')" }} >
       {/* NavBar */}
       <div className=" px-[50px] sm:px-[100px] py-[40px] flex justify-between">
         <div>
         <Link href="/">
-          <h1>Logo</h1>
+           <Image src="/logo.png" alt="logo" width={100} height={100} />
           </Link>
         </div>
         <div className="hidden sm:text-[#b2b0c6] sm:flex justify-center cursor-pointer gap-5">
@@ -32,7 +33,7 @@ export default function NavBar() {
           <h1>Features</h1>
         </div>
 
-        <div className="grid">
+        <div className="hidden sm:grid">
         <WalletDefault />
         </div>
 
@@ -47,7 +48,7 @@ export default function NavBar() {
 
       {isOpen && (
         <div
-          className="fixed z-20 top-0 bg-[#010922]
+          className="fixed z-20 top-0 relative bg-blend-multiply bg-la
          right-0 bottom-0 left-0 flex flex-col 
          items-center gap-6 justify-center"
         >
