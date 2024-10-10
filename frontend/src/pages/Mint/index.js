@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { FileIcon } from "@radix-ui/react-icons";
 import Papa from "papaparse";
+import { pinata } from "@/Constants/pinata";
+
+
 
 export default function Mint() {
   const [info, setInfo] = useState("");
@@ -10,12 +13,16 @@ export default function Mint() {
   const [csvFile, setCsvFile] = useState("");
   const [csvFileName, setCsvFileName] = useState("");
 
+  const [imageFile, setImageFile] = useState(null);
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       setFileName(file.name);
+      setImageFile(file);
     }
   };
+
 
   const handleCsvChange = (event) => {
     const file = event.target.files[0];
@@ -38,6 +45,22 @@ export default function Mint() {
     }
   };
 
+  const uploadImageToIPFS = async () => {
+    if (!imageFile) {
+      throw new Error("No image file selected");
+    }
+  
+   
+
+    const buffer = await imageFile.arrayBuffer();
+    // Create a new File object
+    const file = new File([buffer], imageFile.name, { type: imageFile.type });
+    
+  
+    const response = await pinata.upload.file(file);
+    return response.IpfsHash;
+  };
+
   const handleProcessCsv = () => {
     return new Promise((resolve, reject) => {
       if (!csvFile) {
@@ -47,42 +70,68 @@ export default function Mint() {
 
       Papa.parse(csvFile, {
         complete: (results) => {
-          const jsonData = results.data.map((row) => ({
-            ...row,
-            image: fileName,
-          }));
-          resolve(jsonData);
+          resolve(results.data);
         },
         error: (error) => {
           reject(error);
         },
-        header: true,
+        header: true
       });
     });
   };
 
-  const handleAddImageToJson = async (fileName) => {};
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-
+    
     console.log("Form submitted with the following details:");
     console.log("Image file:", fileName);
-    console.log("CSV file:", csvFile ? csvFile.name : "No file selected");
+    console.log("CSV file:", csvFileName);
     console.log("Tag:", tag);
     console.log("Community-specific information:", info);
 
     try {
+      // Upload image to IPFS
+      const imageCID = await uploadImageToIPFS();
+      console.log("Image uploaded to IPFS with CID:", imageCID);
+
+      // Create IPFS URL for the image
+      const imageUrl = `https://ipfs.io/ipfs/${imageCID}`;
+
+      // Process CSV
       const processedCsv = await handleProcessCsv();
-      console.log("Processed CSV data:", processedCsv);
-      // You can add more processing logic here
+      
+      // Add image URL to each array
+      const csvWithImage = processedCsv.map(row => ({
+        ...row,
+        image: imageUrl
+      }));
+
+      console.log("Processed CSV data with image URL:", csvWithImage);
+
+      // Prepare JSON data for upload
+      const jsonData = {
+        pinataContent: csvWithImage,
+        pinataMetadata: {
+          name: tag,
+          description: info,
+        },
+      };
+
+  
+      const jsonUploadResult = await pinata.upload.json(jsonData);
+      const JsonUrl = `https://ipfs.io/ipfs/${jsonUploadResult.IpfsHash}`;
+      console.log("JSON data uploaded to IPFS with CID:", JsonUrl);
+
     } catch (error) {
-      console.error("Error processing CSV:", error);
+      console.error("Error processing and uploading data:", error);
     }
 
     setLoading(false);
   };
+
 
   return (
     <div className="">
