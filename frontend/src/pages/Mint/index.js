@@ -102,11 +102,24 @@ export default function Mint() {
 
       // Process CSV
       const processedCsv = await handleProcessCsv();
+
       
       // Add image URL to each array
       const csvWithImage = processedCsv.map(row => ({
         ...row,
-        image: imageUrl
+        name: `${row.Name}'s NFT Certificate`,  // NFT title
+        description: `Award for ${row.Name}`,    // Description of the NFT
+        image: imageUrl,  // IPFS URL for the image
+        attributes: [     // Optional: include attributes
+          {
+            trait_type: "Recipient Name",
+            value: row.Name
+          },
+          {
+            trait_type: "Wallet Address",
+            value: row["Wallet Address"]
+          }
+        ]
       }));
 
       console.log("Processed CSV data with image URL:", csvWithImage);
