@@ -46,7 +46,7 @@ export default function Hero() {
           <h1 className="text-[45px] pt-[20px] text-[40px] sm:text-[60px] font-extrabold"> Empowering Communities, <br /> Celebrating Achievements!</h1>
 
           <p className="py-4 text-[#b2b0c6] text-[12px] sm:text-[16px] ">
-            NFT Minting Platform for Community Certificates, Awards, and Tickets
+            NFT Minting Platform for Community Certificates, Awards, Tickets
             and more
           </p>
           <div className="flex justify-center space-x-4 text-[15px] sm:text-[20px] text-white  pt-[30px] mx-6">

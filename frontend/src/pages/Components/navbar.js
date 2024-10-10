@@ -39,25 +39,17 @@ export default function NavBar() {
 
         <div className="md:hidden mb-4 ">
           <button className="text-dark" onClick={toggleMenu}>
-            {isOpen ? <Cross2Icon /> : <HamburgerMenuIcon />}
-          </button>
-        </div>
-
-
-      </div>
-
-      {isOpen && (
-        <div
+            {isOpen ?
+            <div>
+              <div className="align-center"> 
+            <Cross2Icon /> 
+            </div>
+            <div
           className="fixed z-20 top-0 relative bg-blend-multiply bg-la
          right-0 bottom-0 left-0 flex flex-col 
          items-center gap-6 justify-center"
         >
-          <button
-            className="text-white absolute top-[60px] right-[40px]"
-            onClick={toggleMenu}
-          >
-            <Cross2Icon className="text-2xl" />
-          </button>
+         
 
           <h3 className="text-white text-sm font-normal leading-none">
             <Link href="/">Home</Link>
@@ -83,7 +75,23 @@ export default function NavBar() {
             </div>
          
         </div>
-      )}
+
+            </div>
+            
+            
+            :
+            
+            
+            <HamburgerMenuIcon />
+            
+            }
+          </button>
+        </div>
+
+
+      </div>
+
+     
     </div>
   );
 }

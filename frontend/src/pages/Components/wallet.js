@@ -17,8 +17,6 @@ export default function WalletComponent() {
   
   const { address } = useMintifyContext();
 
-  
-
 
   return (
     <div className="flex justify-end">

@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { FileIcon } from '@radix-ui/react-icons';
-
+import { FileIcon } from "@radix-ui/react-icons";
+import Papa from "papaparse";
 
 export default function Mint() {
-  const [address, setAddress] = useState("");
+  const [info, setInfo] = useState("");
+  const [tag, setTag] = useState("");
   const [loading, setLoading] = useState("");
   const [fileName, setFileName] = useState("");
   const [csvFile, setCsvFile] = useState("");
+  const [csvFileName, setCsvFileName] = useState("");
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -18,41 +20,90 @@ export default function Mint() {
   const handleCsvChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setCsvFile(file.name);
+      setCsvFile(file);
+      setCsvFileName(file.name);
     }
   };
 
   const handleChange = (event) => {
     switch (event.target.name) {
-      case "address":
-        setAddress(event.target.value);
+      case "info":
+        setInfo(event.target.value);
+        break;
+      case "tag":
+        setTag(event.target.value);
         break;
       default:
         break;
     }
   };
 
-  const handleSubmit = async (event) => {};
+  const handleProcessCsv = () => {
+    return new Promise((resolve, reject) => {
+      if (!csvFile) {
+        reject(new Error("No CSV file selected"));
+        return;
+      }
+
+      Papa.parse(csvFile, {
+        complete: (results) => {
+          const jsonData = results.data.map((row) => ({
+            ...row,
+            image: fileName,
+          }));
+          resolve(jsonData);
+        },
+        error: (error) => {
+          reject(error);
+        },
+        header: true,
+      });
+    });
+  };
+
+  const handleAddImageToJson = async (fileName) => {};
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+
+    console.log("Form submitted with the following details:");
+    console.log("Image file:", fileName);
+    console.log("CSV file:", csvFile ? csvFile.name : "No file selected");
+    console.log("Tag:", tag);
+    console.log("Community-specific information:", info);
+
+    try {
+      const processedCsv = await handleProcessCsv();
+      console.log("Processed CSV data:", processedCsv);
+      // You can add more processing logic here
+    } catch (error) {
+      console.error("Error processing CSV:", error);
+    }
+
+    setLoading(false);
+  };
 
   return (
     <div className="">
-       <div className="bg-[#17123d] relative brightness-150 bg-blend-hue" style={{ backgroundImage: "url('cover.png')" }}>
-      {/* Hero */}
-      <div className="px-[50px] py-[50px]  text-center sm:px-[100px]"  >
-        
-        
-        <div className="grid ">
-          <h1 className="text-[45px] pt-[20px] text-[30px] sm:text-[40px] font-extrabold"> Empowering Communities, <br /> Celebrating Achievements!</h1>
+      <div
+        className="bg-[#17123d] relative brightness-150 bg-blend-hue"
+        style={{ backgroundImage: "url('cover.png')" }}
+      >
+        {/* Hero */}
+        <div className="px-[50px] py-[50px]  text-center sm:px-[100px]">
+          <div className="grid ">
+            <h1 className="text-[45px] pt-[20px] text-[30px] sm:text-[40px] font-extrabold">
+               Empowering Communities, <br /> Celebrating Achievements!
+            </h1>
 
-          <p className="py-4 text-[#b2b0c6] text-[10px] sm:text-[13px] ">
-            NFT Minting Platform for Community Certificates, Awards, and Tickets
-            and more
-          </p>
-         
+            <p className="py-4 text-[#b2b0c6] text-[10px] sm:text-[13px] ">
+              NFT Minting Platform for Community Certificates, Awards, and
+              Tickets and more
+            </p>
+          </div>
         </div>
-
       </div>
-    </div>
 
       <h2 className="font-semibold	text-[36px] text-center py-[100px]">Mint</h2>
 
@@ -61,7 +112,6 @@ export default function Mint() {
           className="shadow-md rounded-lg px-8 pb-[50px] flex flex-col w-full"
           onSubmit={handleSubmit}
         >
-         
           {/* Upload image */}
           <div className="pb-5 appearance-none w-full">
             <label
@@ -73,7 +123,7 @@ export default function Mint() {
             <label
               htmlFor="image-upload"
               className="block w-full px-4 py-2 bg-white text-[#27289d] rounded-lg shadow-lg  cursor-pointer hover:bg-green-50  transition-all duration-300 ease-in-out text-right"
-            >    
+            >
               <span className="text-sm text-[#27289d] font-semibold">
                 {fileName || "Select file"}
               </span>
@@ -93,18 +143,20 @@ export default function Mint() {
             )}
             <label
               className="block text-[#b4b5be] sm:text-[13px] pb-2 font-semibold leading-snug"
-              htmlFor="address">
-                e.g., certificate design, event ticket, or award
-              </label>
+              htmlFor="address"
+            >
+              e.g., certificate design, event ticket, or award
+            </label>
           </div>
 
-           {/* Upload CSV */}
-           <div className="pb-5 appearance-none w-full">
+          {/* Upload CSV */}
+          <div className="pb-5 appearance-none w-full">
             <label
               className="block text-white sm:text-[20px] pb-2 font-semibold leading-snug"
-              htmlFor="address">
-                Details in a CSV file
-              </label>
+              htmlFor="address"
+            >
+              Details in a CSV file
+            </label>
             <label
               htmlFor="csv-upload"
               className="flex items-center justify-between px-4 py-2 bg-white text-[#27289d] rounded-lg shadow-lg border border-[#27289d] cursor-pointer hover:bg-green-50 transition-all duration-300 ease-in-out"
@@ -113,7 +165,9 @@ export default function Mint() {
                 <FileIcon className="w-5 h-5 mr-2" />
                 <span className="text-sm font-semibold">CSV File</span>
               </div>
-              <span className="text-sm font-semibold">{csvFile || "Select file"}</span>
+              <span className="text-sm font-semibold">
+                {csvFileName || "Select file"}
+              </span>
               <input
                 id="csv-upload"
                 type="file"
@@ -122,9 +176,9 @@ export default function Mint() {
                 onChange={handleCsvChange}
               />
             </label>
-            {csvFile && (
+            {csvFileName && (
               <p className="mt-2 text-sm text-gray-600 text-center">
-                Selected file: {csvFile}
+                Selected file: {csvFileName}
               </p>
             )}
             <label
@@ -136,20 +190,19 @@ export default function Mint() {
             </label>
           </div>
 
-
           <div className="pb-5 appearance-none w-full">
             <label
               className="block text-white sm:text-[20px] pb-2 font-semibold leading-snug"
-              htmlFor="address"
+              htmlFor="tag"
             >
               Tag
             </label>
             <input
               className="border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-lg"
-              id="address"
+              id="tag"
               type="text"
-              name="address"
-              value={address}
+              name="tag"
+              value={tag}
               onChange={handleChange}
               placeholder="Enter one tag in form of a acronym"
             />
@@ -159,20 +212,19 @@ export default function Mint() {
           <div className="pb-5 appearance-none w-full">
             <label
               className="block text-white sm:text-[20px] pb-2 font-semibold leading-snug"
-              htmlFor="address"
+              htmlFor="info"
             >
               Community-specific information
             </label>
             <input
               className="border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-lg"
-              id="address"
+              id="info"
               type="text"
-              name="address"
-              value={address}
+              name="info"
+              value={info}
               onChange={handleChange}
               placeholder="e.g., course name, award type, etc."
             />
-            
           </div>
 
           <div className="bg-[#8080d7] px-5 py-2.5 rounded-full justify-center items-center gap-2 inline-flex">
@@ -185,9 +237,7 @@ export default function Mint() {
             </button>
           </div>
         </form>
-       
       </div>
-      
     </div>
   );
 }
