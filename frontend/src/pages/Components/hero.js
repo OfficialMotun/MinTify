@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useMintifyContext } from "../../Context/mintifyContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { motion } from "framer-motion"
 
 export default function Hero() {
   const { address } = useMintifyContext();
@@ -45,22 +46,37 @@ export default function Hero() {
         <div className="grid ">
           <h1 className="text-[45px] pt-[20px] text-[40px] sm:text-[60px] font-extrabold"> Empowering Communities, <br /> Celebrating Achievements!</h1>
 
-          <p className="py-4 text-[#b2b0c6] text-[12px] sm:text-[16px] ">
+          <p className="py-4 text-white text-[#b2b0c6] text-[12px] sm:text-[16px] ">
             NFT Minting Platform for Community Certificates, Awards, Tickets
             and more
           </p>
           <div className="flex justify-center space-x-4 text-[15px] sm:text-[20px] text-white  pt-[30px] mx-6">
             <Link href="/Mint" passHref>
+            <motion.div whileHover={{ scale: 1.1 }}
+  transition={{ type: "spring", stiffness: 400, damping: 10 }}>
             <button onClick={handleButtonMint} className="rounded-lg bg-[#8381d5]  px-4 py-3">Mint</button>
+            </motion.div>
             </Link>
+
             <Link href="/Eligibility" passHref>
-            <button onClick={handleButtonEligibility} className="border-solid border-2 border-[#8381d5] rounded-full text-white px-2 py-3">Check Eligibility</button>
-            </Link>
+            <motion.div whileHover={{ scale: 1.1 }}
+  transition={{ type: "spring", stiffness: 400, damping: 10 }} >
+            <button  onClick={handleButtonEligibility} className="border-solid border-2 border-[#8381d5] rounded-full text-white px-2 py-3">Check Eligibility</button>
+            </motion.div>
+          </Link>
+           
           </div>
 
-          <div className="pb-[40px]">
+          <motion.div drag
+    dragConstraints={{
+      top: -50,
+      left: -50,
+      right: 50,
+      bottom: 50,
+    }} whileHover={{ scale: 1.1 }}
+    whileTap={{ scale: 0.9 }}  transition={{ease: [0.17, 0.67, 0.83, 0.67],duration: 2,x: { duration: 1 }}} className="pb-[40px]">
             <Image src="/certificate.png" alt="hero" width={1180} height={326} />
-          </div>
+          </motion.div>
         </div>
 
       </div>

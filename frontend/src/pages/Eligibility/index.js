@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 export default function Eligibility() {
   const [address, setAddress] = useState("");
@@ -57,7 +58,8 @@ export default function Eligibility() {
             placeholder="Enter the contract address"
           />
         </div>
-        <div className="bg-[#8080d7] px-5 py-2.5 rounded-full justify-center items-center gap-2 inline-flex">
+        <motion.div whileHover={{ scale: 1.1 }}
+  transition={{ type: "spring", stiffness: 400, damping: 10 }} className="bg-[#8080d7] px-5 py-2.5 rounded-full justify-center items-center gap-2 inline-flex">
           <button
             type="submit"
             className="text-white cursor-pointer w-full py-2 text-lg font-semibold"
@@ -65,7 +67,7 @@ export default function Eligibility() {
           >
             {loading ? "Checking..pls wait" : "Check Eligibility"}
           </button>
-        </div>
+        </motion.div>
       </form>
     </div>
     </div>
