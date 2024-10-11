@@ -5,13 +5,31 @@ import Link from "next/link";
 import { WalletDefault } from "@coinbase/onchainkit/wallet";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useMintifyContext } from "../../Context/mintifyContext";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const featuresRef = useRef(null);
+  
+
+  const { address } = useMintifyContext();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleButtonDashboard = () => {
+    if (!address) {
+      toast.error('Please connect your wallet first!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
   };
 
   const handleNavClick = (sectionId) => {
@@ -47,11 +65,11 @@ export default function NavBar() {
             <h1 onClick={() => handleNavClick('home')}>Home</h1>
           </Link>
           <Link href="/Dashboard">
-            <h1>Dashboard</h1>
+            <h1 onClick={ () => handleButtonDashboard()}>Dashboard</h1>
           </Link>
           
-            
             <h1 onClick={() => handleNavClick('features')}>Features</h1> 
+  
             
         </div>
         <div className="hidden sm:grid">
@@ -90,6 +108,7 @@ export default function NavBar() {
               <HamburgerMenuIcon />
             )}
           </button>
+          <ToastContainer />
         </div>
       </div>
     </div>

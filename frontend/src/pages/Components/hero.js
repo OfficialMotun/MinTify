@@ -22,6 +22,7 @@ export default function Hero() {
     }
   };
 
+
   const handleButtonEligibility = (e) => {
     if (!address) {
       e.preventDefault();
