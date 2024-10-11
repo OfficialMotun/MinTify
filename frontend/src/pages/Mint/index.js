@@ -2,6 +2,8 @@ import { useState } from "react";
 import { FileIcon } from "@radix-ui/react-icons";
 import Papa from "papaparse";
 import { pinata } from "@/Constants/pinata";
+import { StandardMerkleTree } from "@openzeppelin/merkle-tree"; // Import Merkle Tree from OpenZeppelin
+// import Web3 from "web3"; // Assuming you're using Web3.js or ethers.js
 
 
 
@@ -12,8 +14,10 @@ export default function Mint() {
   const [fileName, setFileName] = useState("");
   const [csvFile, setCsvFile] = useState("");
   const [csvFileName, setCsvFileName] = useState("");
-
   const [imageFile, setImageFile] = useState(null);
+  const [merkleRoot, setMerkleRoot] = useState(null); // To store the generated Merkle root
+
+
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -80,6 +84,19 @@ export default function Mint() {
     });
   };
 
+
+  const generateMerkleRoot = (values) => {
+     const formattedValues = values
+    .filter((row) => row["Wallet Address"] && row["Wallet Address"].trim() !== "") // Ensure valid address exists
+    .map((row, index) => {
+      return [row["Wallet Address"].trim(), index]; // Address and index
+    });
+
+
+    const tree = StandardMerkleTree.of(formattedValues, ["address", "uint256"]);
+    console.log("Generated Merkle Root:", tree.root);
+    return tree.root;
+  };
   
 
   const handleSubmit = async (event) => {
@@ -102,6 +119,11 @@ export default function Mint() {
 
       // Process CSV
       const processedCsv = await handleProcessCsv();
+
+      const merkleRoot = generateMerkleRoot(processedCsv); // Generate Merkle root
+      setMerkleRoot(merkleRoot);
+
+      console.log("Merkle Root generated:", merkleRoot);
 
       
       // Add image URL to each array
