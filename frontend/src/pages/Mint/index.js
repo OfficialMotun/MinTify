@@ -80,6 +80,8 @@ export default function Mint() {
     });
   };
 
+
+  
   
 
   const handleSubmit = async (event) => {
