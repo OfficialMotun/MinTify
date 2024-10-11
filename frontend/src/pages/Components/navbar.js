@@ -54,10 +54,9 @@ export default function NavBar() {
             <h1 onClick={() => handleNavClick('features')}>Features</h1> 
             
         </div>
-        <motion.div whileHover={{ scale: 1.1 }}
-  transition={{ type: "spring", stiffness: 400, damping: 10 }} className="hidden sm:grid">
+        <div className="hidden sm:grid">
           <WalletDefault />
-        </motion.div>
+        </div>
         <div className="md:hidden mb-4 ">
           <button className="text-dark" onClick={toggleMenu}>
             {isOpen ? (
@@ -82,10 +81,9 @@ export default function NavBar() {
                   <h3 className="text-white text-sm font-normal leading-none">
                     <button onClick={() => handleNavClick('features')}>Features</button>
                   </h3>
-                  <motion.div whileHover={{ scale: 1.1 }}
-  transition={{ type: "spring", stiffness: 400, damping: 10 }} className="flex">
+                  <div className="flex">
                     <WalletDefault />
-                  </motion.div>
+                  </div>
                 </div>
               </motion.nav>
             ) : (
