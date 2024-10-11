@@ -2,8 +2,10 @@ import { useState } from "react";
 import { FileIcon } from "@radix-ui/react-icons";
 import Papa from "papaparse";
 import { pinata } from "@/Constants/pinata";
+
+import { motion } from "framer-motion";
+
 import { StandardMerkleTree } from "@openzeppelin/merkle-tree"; // Import Merkle Tree from OpenZeppelin
-// import Web3 from "web3"; // Assuming you're using Web3.js or ethers.js
 
 
 
@@ -85,6 +87,7 @@ export default function Mint() {
   };
 
 
+
   const generateMerkleRoot = (values) => {
      const formattedValues = values
     .filter((row) => row["Wallet Address"] && row["Wallet Address"].trim() !== "") // Ensure valid address exists
@@ -97,6 +100,7 @@ export default function Mint() {
     console.log("Generated Merkle Root:", tree.root);
     return tree.root;
   };
+
   
 
   const handleSubmit = async (event) => {
@@ -311,7 +315,8 @@ export default function Mint() {
             />
           </div>
 
-          <div className="bg-[#8080d7] px-5 py-2.5 rounded-full justify-center items-center gap-2 inline-flex">
+          <motion.div whileHover={{ scale: 1.1 }}
+  transition={{ type: "spring", stiffness: 400, damping: 10 }} className="bg-[#8080d7] px-5 py-2.5 rounded-full justify-center items-center gap-2 inline-flex">
             <button
               type="submit"
               className="text-white cursor-pointer w-full py-2 text-lg font-semibold"
@@ -319,7 +324,7 @@ export default function Mint() {
             >
               {loading ? "Minting..pls wait" : "Mint"}
             </button>
-          </div>
+          </motion.div>
         </form>
       </div>
     </div>
