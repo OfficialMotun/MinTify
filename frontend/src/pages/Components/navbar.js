@@ -99,7 +99,10 @@ export default function NavBar() {
                   <h3 className="text-white text-sm font-normal leading-none">
                     <button onClick={() => handleNavClick('features')}>Features</button>
                   </h3>
-                  <div  className="flex">
+
+
+                  <div className="flex">
+
                     <WalletDefault />
                   </div>
                 </div>
