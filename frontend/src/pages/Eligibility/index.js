@@ -19,7 +19,7 @@ export default function Eligibility() {
 
   return (
     <div className="">
-      <div className="bg-[#17123d] relative brightness-150 bg-blend-hue" style={{ backgroundImage: "url('cover.png')" }}>
+      <div className="bg-[#131c61] relative brightness-150 bg-blend-hue" style={{ backgroundImage: "url('cover.png')" }}>
       {/* Hero */}
       <div className="px-[50px] py-[50px]  text-center sm:px-[100px]"  >
         
