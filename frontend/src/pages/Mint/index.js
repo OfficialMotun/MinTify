@@ -3,9 +3,19 @@ import { FileIcon } from "@radix-ui/react-icons";
 import Papa from "papaparse";
 import { pinata } from "@/Constants/pinata";
 import { StandardMerkleTree } from "@openzeppelin/merkle-tree"; // Import Merkle Tree from OpenZeppelin
-// import Web3 from "web3"; // Assuming you're using Web3.js or ethers.js
+import { useAccount, useWalletClient } from "wagmi";
+import { ethers } from "ethers";
+// import { createWalletClient, custom } from 'viem';
+// import { MintifyFactoryABI } from "../../ABI/mintify.json"
 
 
+const aBI = [
+  "function tryAggregate(bool requireSuccess, (address target, bytes callData)[] calls) returns ((bool success, bytes returnData)[] returnData)",
+];
+
+const MintifyFactoryABI = [
+  "function createMintify(address _owner, string name, string symbol,bytes32 merkleRoot,   string CsvCid ) returns (address)",
+];
 
 export default function Mint() {
   const [info, setInfo] = useState("");
@@ -17,8 +27,12 @@ export default function Mint() {
   const [imageFile, setImageFile] = useState(null);
   const [merkleRoot, setMerkleRoot] = useState(null); // To store the generated Merkle root
 
+  const { address, connector} = useAccount(); // Get connected wallet address
 
+  const { data: walletClient } = useWalletClient();
 
+  
+  
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -98,150 +112,6 @@ export default function Mint() {
     return tree.root;
   };
   
-
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-  //   setLoading(true);
-    
-  //   console.log("Form submitted with the following details:");
-  //   console.log("Image file:", fileName);
-  //   console.log("CSV file:", csvFileName);
-  //   console.log("Tag:", tag);
-  //   console.log("Community-specific information:", info);
-
-  //   try {
-  //     // Upload image to IPFS
-  //     const imageCID = await uploadImageToIPFS();
-  //     console.log("Image uploaded to IPFS with CID:", imageCID);
-
-  //     // Create IPFS URL for the image
-  //     const imageUrl = `https://ipfs.io/ipfs/${imageCID}`;
-
-  //     // Process CSV
-  //     const processedCsv = await handleProcessCsv();
-
-  //     const merkleRoot = generateMerkleRoot(processedCsv); // Generate Merkle root
-  //     setMerkleRoot(merkleRoot);
-
-  //     console.log("Merkle Root generated:", merkleRoot);
-     
-     
-  //     // Add image URL to each array
-  //     const csvWithImage = processedCsv.map(row => ({
-  //       ...row,
-  //       name: `${row.Name}'s NFT Certificate`,  // NFT title
-  //       description: `Award for ${row.Name}`,    // Description of the NFT
-  //       image: imageUrl,  // IPFS URL for the image
-  //       attributes: [     // Optional: include attributes
-  //         {
-  //           trait_type: "Recipient Name",
-  //           value: row.Name
-  //         },
-  //         {
-  //           trait_type: "Wallet Address",
-  //           value: row["Wallet Address"]
-  //         }
-  //       ]
-  //     }));
-
-  //     console.log("Processed CSV data with image URL:", csvWithImage);
-
-  //     // Prepare JSON data for upload
-  //     const jsonData = {
-  //       pinataContent: csvWithImage,
-  //       pinataMetadata: {
-  //         name: tag,
-  //         description: info,
-  //       },
-  //     };
-
-  
-  //     const jsonUploadResult = await pinata.upload.json(jsonData);
-  //     const JsonUrl = `https://ipfs.io/ipfs/${jsonUploadResult.IpfsHash}`;
-  //     console.log("JSON data uploaded to IPFS with CID:", JsonUrl);
-
-  //   } catch (error) {
-  //     console.error("Error processing and uploading data:", error);
-  //   }
-
-  //   setLoading(false);
-  // };
-    
-//     const handleSubmit = async (event) => {
-//   event.preventDefault();
-//   setLoading(true);
-  
-//   console.log("Form submitted with the following details:");
-//   console.log("Image file:", fileName);
-//   console.log("CSV file:", csvFileName);
-//   console.log("Tag:", tag);
-//   console.log("Community-specific information:", info);
-
-//   try {
-//     // Upload image to IPFS
-//     const imageCID = await uploadImageToIPFS();
-//     console.log("Image uploaded to IPFS with CID:", imageCID);
-
-//     // Create IPFS URL for the image
-//     const imageUrl = `https://ipfs.io/ipfs/${imageCID}`;
-
-//     // Process CSV
-//     const processedCsv = await handleProcessCsv();
-
-//     const merkleRoot = generateMerkleRoot(processedCsv); // Generate Merkle root
-//     setMerkleRoot(merkleRoot);
-
-//     console.log("Merkle Root generated:", merkleRoot);
-
-//     // Process each CSV row and upload metadata separately to Pinata
-//     const metadataCIDs = [];
-
-//     for (let i = 0; i < processedCsv.length; i++) {
-//       const row = processedCsv[i];
-
-//       // Create metadata for each recipient
-//       const metadata = {
-//         name: `${row.Name}'s NFT Certificate`,  // NFT title
-//         description: `Award for ${row.Name}`,    // Description of the NFT
-//         image: imageUrl,  // IPFS URL for the image
-//         attributes: [     // Optional: include attributes
-//           {
-//             trait_type: "Recipient Name",
-//             value: row.Name
-//           },
-//           {
-//             trait_type: "Wallet Address",
-//             value: row["Wallet Address"]
-//           }
-//         ]
-//       };
-
-//       // Upload the metadata to Pinata
-//       const jsonData = {
-//         pinataContent: metadata,
-//         pinataMetadata: {
-//           name: `${row.Name}-nft-metadata`,
-//           description: `Metadata for ${row.Name}'s NFT`,
-//         },
-//       };
-
-//       const jsonUploadResult = await pinata.upload.json(jsonData);
-//       const metadataCID = jsonUploadResult.IpfsHash;
-//       metadataCIDs.push(`https://ipfs.io/ipfs/${metadataCID}`);
-
-//       console.log(`Metadata for ${row.Name} uploaded to IPFS with CID: ${metadataCID}`);
-//     }
-
-//     // Final list of metadata CIDs for all NFTs
-//     console.log("All metadata CIDs:", metadataCIDs);
-
-//   } catch (error) {
-//     console.error("Error processing and uploading data:", error);
-//   }
-
-//   setLoading(false);
-// };
-
 
 const handleSubmit = async (event) => {
   event.preventDefault();
@@ -325,7 +195,34 @@ const handleSubmit = async (event) => {
     
     console.log("Updated CSV uploaded to IPFS with URI:", csvUri);
 
-    return csvUri;  // Returning the CSV URI with Token URIs
+    // return csvUri;  // Returning the CSV URI with Token URIs
+
+      const provider = new ethers.BrowserProvider(walletClient?.provider);
+      const signer = provider.getSigner();
+
+      console.log(`Connected wallet signer: ${await signer.getAddress()}`);
+
+     // Interacting with the MintifyFactory contract
+     const mintifyFactoryAddress =  "0x798bb21202a27f0A45806ba3C4D4f87cba3DC259"; 
+     const mintifyFactoryContract = new ethers.Contract(
+       mintifyFactoryAddress,
+       MintifyFactoryABI,
+       signer
+     );
+     console.log(`signer is ${walletClient.signer }`);
+     
+
+     const transaction = await mintifyFactoryContract.createMintify(
+      address, // Connected wallet address as owner
+      tag,          // Name for the Mintify
+      info,         // Symbol for the Mintify
+      merkleRoot,   // Generated Merkle root
+      csvUri        // CID for the uploaded CSV file
+    );
+    await transaction.wait();
+
+    console.log("Mintify created successfully!");
+
 
   } catch (error) {
     console.error("Error processing and uploading data:", error);
