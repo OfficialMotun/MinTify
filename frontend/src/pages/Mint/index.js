@@ -2,14 +2,19 @@ import { useState } from "react";
 import { FileIcon } from "@radix-ui/react-icons";
 import Papa from "papaparse";
 import { pinata } from "@/Constants/pinata";
-
+import {useConnect, useAccount, useWriteContract} from "wagmi";
 import { motion } from "framer-motion";
-
-import { StandardMerkleTree } from "@openzeppelin/merkle-tree"; // Import Merkle Tree from OpenZeppelin
-
+import { coinbaseWallet } from 'wagmi/connectors';
+import { base, baseSepolia } from 'wagmi/chains';
+import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
+import { useMintifyContext } from "../../Context/mintifyContext";
 
 
 export default function Mint() {
+  const {connectAsync } = useConnect();
+  const { address } = useMintifyContext();
+  const { writeContractAsync } = useWriteContract();
+
   const [info, setInfo] = useState("");
   const [tag, setTag] = useState("");
   const [loading, setLoading] = useState("");
@@ -17,7 +22,7 @@ export default function Mint() {
   const [csvFile, setCsvFile] = useState("");
   const [csvFileName, setCsvFileName] = useState("");
   const [imageFile, setImageFile] = useState(null);
-  const [merkleRoot, setMerkleRoot] = useState(null); // To store the generated Merkle root
+  const [merkleRoot, setMerkleRoot] = useState(null);
 
 
 
@@ -105,6 +110,7 @@ export default function Mint() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     setLoading(true);
     
     console.log("Form submitted with the following details:");
@@ -114,6 +120,11 @@ export default function Mint() {
     console.log("Community-specific information:", info);
 
     try {
+
+      if(!address){ 
+        await connectAsync({chainId: baseSepolia.id, connector: coinbaseWallet({appName: 'Mintify'})});
+      }
+
       // Upload image to IPFS
       const imageCID = await uploadImageToIPFS();
       console.log("Image uploaded to IPFS with CID:", imageCID);
@@ -121,13 +132,67 @@ export default function Mint() {
       // Create IPFS URL for the image
       const imageUrl = `https://ipfs.io/ipfs/${imageCID}`;
 
-      // Process CSV
-      const processedCsv = await handleProcessCsv();
-
-      const merkleRoot = generateMerkleRoot(processedCsv); // Generate Merkle root
+      
+      const merkleRoot = generateMerkleRoot(csvFile);
       setMerkleRoot(merkleRoot);
 
       console.log("Merkle Root generated:", merkleRoot);
+
+      
+      /// 
+      const data = await writeContractAsync({
+        chainId: baseSepolia.id,
+        address: '0x798bb21202a27f0A45806ba3C4D4f87cba3DC259',
+        functionName: 'createMintify',
+        abi: [{
+          "inputs": [
+              {
+                  "internalType": "address",
+                  "name": "_owner",
+                  "type": "address"
+              },
+              {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+              },
+              {
+                  "internalType": "string",
+                  "name": "symbol",
+                  "type": "string"
+              },
+              {
+                  "internalType": "bytes32",
+                  "name": "merkleRoot",
+                  "type": "bytes32"
+              },
+              {
+                  "internalType": "string",
+                  "name": "CsvCid",
+                  "type": "string"
+              }
+          ],
+          "name": "createMintify",
+          "outputs": [
+              {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+              }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+      }],
+      args: [
+        address,
+        tag,
+        info,      
+        merkleRoot,
+        csvUri   
+      ],
+      })
+
+      console.log("data", data)
 
       
       // Add image URL to each array
@@ -136,6 +201,7 @@ export default function Mint() {
         name: `${row.Name}'s NFT Certificate`,  // NFT title
         description: `Award for ${row.Name}`,    // Description of the NFT
         image: imageUrl,  // IPFS URL for the image
+        
         attributes: [     // Optional: include attributes
           {
             trait_type: "Recipient Name",
@@ -146,7 +212,13 @@ export default function Mint() {
             value: row["Wallet Address"]
           }
         ]
+
       }));
+
+
+
+
+
 
       console.log("Processed CSV data with image URL:", csvWithImage);
 
@@ -163,6 +235,9 @@ export default function Mint() {
       const jsonUploadResult = await pinata.upload.json(jsonData);
       const JsonUrl = `https://ipfs.io/ipfs/${jsonUploadResult.IpfsHash}`;
       console.log("JSON data uploaded to IPFS with CID:", JsonUrl);
+
+
+      
 
     } catch (error) {
       console.error("Error processing and uploading data:", error);

@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { Playfair_Display } from "next/font/google";
 import { http, createConfig } from 'wagmi';
-import { base } from 'wagmi/chains';
+import { base, baseSepolia } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
 import { MintifyProvider } from "../Context/mintifyContext";
 
@@ -19,15 +19,16 @@ const playfair = Playfair_Display({
 const queryClient = new QueryClient();
 
 const wagmiConfig = createConfig({
-  chains: [base],
+  chains: [baseSepolia],
   connectors: [
     coinbaseWallet({
       appName: 'Mintify',
     }),
   ],
   transports: {
-    [base.id]: http(),
+    [baseSepolia.id]: http(),
   },
+  ssr: true,
 });
 
 export default function App({ Component, pageProps }) {
@@ -36,7 +37,7 @@ export default function App({ Component, pageProps }) {
       <WagmiProvider config={wagmiConfig}>
         <OnchainKitProvider
           apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
-          chain={base}
+          chain={baseSepolia}
         >
           <MintifyProvider>
           <div className={`playfair.className bg-[#17123d]`}>
