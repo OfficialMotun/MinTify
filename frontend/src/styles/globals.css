@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 body {
   color: #ffffff;
   background: var(--background);
@@ -15,3 +13,4 @@ body {
     text-wrap: balance;
   }
 }
+
