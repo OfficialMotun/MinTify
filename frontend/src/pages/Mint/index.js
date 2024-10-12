@@ -2,22 +2,20 @@ import { useState } from "react";
 import { FileIcon } from "@radix-ui/react-icons";
 import Papa from "papaparse";
 import { pinata } from "@/Constants/pinata";
-import { StandardMerkleTree } from "@openzeppelin/merkle-tree"; // Import Merkle Tree from OpenZeppelin
-import { useAccount, useWalletClient } from "wagmi";
-import { ethers } from "ethers";
-// import { createWalletClient, custom } from 'viem';
-// import { MintifyFactoryABI } from "../../ABI/mintify.json"
+import {useConnect, useAccount, useWriteContract} from "wagmi";
+// import { motion } from "framer-motion";
+import { coinbaseWallet } from 'wagmi/connectors';
+import { base, baseSepolia } from 'wagmi/chains';
+import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
+import { useMintifyContext } from "../../Context/mintifyContext";
 
-
-const aBI = [
-  "function tryAggregate(bool requireSuccess, (address target, bytes callData)[] calls) returns ((bool success, bytes returnData)[] returnData)",
-];
-
-const MintifyFactoryABI = [
-  "function createMintify(address _owner, string name, string symbol,bytes32 merkleRoot,   string CsvCid ) returns (address)",
-];
 
 export default function Mint() {
+
+  const {connectAsync } = useConnect();
+  const { address } = useMintifyContext();
+  const { writeContractAsync } = useWriteContract();
+
   const [info, setInfo] = useState("");
   const [tag, setTag] = useState("");
   const [loading, setLoading] = useState("");
@@ -27,9 +25,7 @@ export default function Mint() {
   const [imageFile, setImageFile] = useState(null);
   const [merkleRoot, setMerkleRoot] = useState(null); // To store the generated Merkle root
 
-  const { address, connector} = useAccount(); // Get connected wallet address
-
-  const { data: walletClient } = useWalletClient();
+  
 
   
   
@@ -124,6 +120,11 @@ const handleSubmit = async (event) => {
   console.log("Community-specific information:", info);
 
   try {
+
+    if(!address){ 
+      await connectAsync({chainId: baseSepolia.id, connector: coinbaseWallet({appName: 'Mintify'})});
+    }
+
     // Step 1: Upload image to IPFS
     const imageCID = await uploadImageToIPFS();
     console.log("Image uploaded to IPFS with CID:", imageCID);
@@ -195,33 +196,60 @@ const handleSubmit = async (event) => {
     
     console.log("Updated CSV uploaded to IPFS with URI:", csvUri);
 
-    // return csvUri;  // Returning the CSV URI with Token URIs
+    const data = await writeContractAsync({
+      chainId: baseSepolia.id,
+      address: '0x798bb21202a27f0A45806ba3C4D4f87cba3DC259',
+      functionName: 'createMintify',
+      abi: [{
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_owner",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "symbol",
+                "type": "string"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "merkleRoot",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "string",
+                "name": "CsvCid",
+                "type": "string"
+            }
+        ],
+        "name": "createMintify",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }],
+    args: [
+      address,
+      tag,
+      info,      
+      merkleRoot,
+      csvUri   
+    ],
+    })
 
-      const provider = new ethers.BrowserProvider(walletClient?.provider);
-      const signer = provider.getSigner();
-
-      console.log(`Connected wallet signer: ${await signer.getAddress()}`);
-
-     // Interacting with the MintifyFactory contract
-     const mintifyFactoryAddress =  "0x798bb21202a27f0A45806ba3C4D4f87cba3DC259"; 
-     const mintifyFactoryContract = new ethers.Contract(
-       mintifyFactoryAddress,
-       MintifyFactoryABI,
-       signer
-     );
-     console.log(`signer is ${walletClient.signer }`);
-     
-
-     const transaction = await mintifyFactoryContract.createMintify(
-      address, // Connected wallet address as owner
-      tag,          // Name for the Mintify
-      info,         // Symbol for the Mintify
-      merkleRoot,   // Generated Merkle root
-      csvUri        // CID for the uploaded CSV file
-    );
-    await transaction.wait();
-
-    console.log("Mintify created successfully!");
+    console.log("data", data)
+    alert(`Transaction submitted: ${data}`); //alert of the tx hash
 
 
   } catch (error) {
