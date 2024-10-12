@@ -43,16 +43,16 @@ export default function Hero() {
         <div className="sm:flex pb-[70px]">
           <div>
             <div className="">
-              <h1 className="pt-[10px] text-[40px] sm:text-[60px] font-extrabold">
+              <h1 className="pt-[10px] text-start text-[45px] sm:text-[60px] font-extrabold">
                  Empowering Communities, Celebrating Achievements!
               </h1>
               
 
-              <p className="py-4 sm:pl-[20px] sm:text-left text-[#b2b0c6] text-[12px] sm:text-[16px] ">
+              <p className="py-4 sm:text-left text-[#b2b0c6] text-[12px] sm:text-[16px] ">
                 NFT Minting Platform for Community Certificates, Awards, Tickets
                 and more
               </p>
-              <div className="flex sm:pl-[20px] space-x-4 text-[15px] sm:text-[20px] text-white pt-[30px]">
+              <div className="flex justify-items-start space-x-4 text-[15px] sm:text-[20px] text-white pt-[30px]">
                 <Link href="/Mint" passHref>
                   <motion.div
                     whileHover={{ scale: 1.1 }}
@@ -82,7 +82,7 @@ export default function Hero() {
                 </Link>
               </div>
 
-              <div className="sm:pl-[20px]  py-10">
+              <div className="py-10">
                 <Image src="/copy.png" alt="image" width={336} height={69} />
               </div>
 
