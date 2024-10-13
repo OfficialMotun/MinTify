@@ -15,6 +15,8 @@
     "@radix-ui/themes": "^3.1.4",
     "@tanstack/react-query": "^5.55.0",
     "dotenv": "^16.4.5",
+    "keccak256": "^1.0.6",
+    "merkletreejs": "^0.4.0",
     "next": "14.2.14",
     "papaparse": "^5.4.1",
     "pinata": "^1.5.0",
