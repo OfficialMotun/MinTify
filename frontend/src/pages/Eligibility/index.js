@@ -1,9 +1,53 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { coinbaseWallet } from 'wagmi/connectors';
+import { base, baseSepolia } from 'wagmi/chains';
+import { useMintifyContext } from "../../Context/mintifyContext";
+import {useConnect, useAccount, useReadContract} from "wagmi";
+import axios from "axios"; 
+import { parse } from "papaparse";
+import keccak256 from "keccak256";// Keccak hashing function
+import { MerkleTree } from "merkletreejs";
 
 export default function Eligibility() {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState("");
+  const [csvData, setCsvData] = useState(null);
+  const [merkleTree, setMerkleTree] = useState(null);
+  const [rootHash, setRootHash] = useState(null);
+  const { address: userAddress } = useAccount();
+
+
+
+  const { data: csvUri, refetch } = useReadContract({
+    abi: [
+      {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "contractToCid",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }],
+    address: "0x798bb21202a27f0A45806ba3C4D4f87cba3DC259",
+    functionName: 'contractToCid',
+    args:  [
+      address
+    ],
+    enabled: false
+  })
+
+
 
   const handleChange = (event) => {
     switch (event.target.name) {
@@ -15,7 +59,72 @@ export default function Eligibility() {
     }
   };
 
-  const handleSubmit = async (event) => {}
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+
+    try {
+
+      const { data: csvUri } = await refetch();
+      console.log("Retrieved CSV URI from contract:", csvUri); 
+
+
+      if (!csvUri) {
+        alert("CSV URI not found for the provided address.");
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.get(csvUri);
+      console.log("Raw CSV data:", response.data); // Log the raw CSV data
+
+
+      const parsedData = parse(response.data, { header: true }).data;
+      console.log("Parsed CSV data:", parsedData); // Log parsed CSV
+
+      setCsvData(parsedData);
+      // alert("CSV data fetched successfully.");
+
+
+      const addresses = parsedData.map((entry) =>
+        entry["Wallet Address"].toLowerCase()
+      );
+  
+      // Generate Merkle Tree
+      const leaves = addresses.map((addr) =>
+        keccak256(addr).toString("hex")
+      );
+      const merkleTree = new MerkleTree(leaves, keccak256, { sortPairs: true });
+      const root = merkleTree.getHexRoot();
+  
+      console.log("Merkle Root:", root);
+  
+      // Generate proof for the connected wallet address
+      const leaf = keccak256(userAddress.toLowerCase()).toString("hex");
+      const proof = merkleTree.getHexProof(leaf);
+  
+      console.log("Generated Proof:", proof);
+  
+      const isEligible = merkleTree.verify(proof, leaf, root);
+      console.log("Is Eligible:", isEligible);
+  
+      if (isEligible) {
+        alert("You are eligible!");
+      } else {
+        alert("You are not eligible.");
+      }
+
+
+      
+    } catch (error) {
+      console.error("An error occurred:", error);
+      setLoading(false);
+    }
+
+    
+
+  }
 
   return (
     <div className="">
@@ -69,6 +178,8 @@ export default function Eligibility() {
           </button>
         </motion.div>
       </form>
+
+      
     </div>
     </div>
   );
