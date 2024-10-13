@@ -39,7 +39,7 @@ export default function App({ Component, pageProps }) {
           chain={baseSepolia}
         >
           <MintifyProvider>
-          <div className={`playfair.className bg-[#17123d]`}>
+          <div className={playfair.className}>
             <NavBar />
             <Component {...pageProps} />
             <Footer />
