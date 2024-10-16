@@ -28,6 +28,7 @@ const wagmiConfig = createConfig({
   transports: {
     [baseSepolia.id]: http(),
   },
+  ssr: true,
 });
 
 export default function App({ Component, pageProps }) {

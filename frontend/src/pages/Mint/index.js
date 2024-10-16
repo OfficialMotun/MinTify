@@ -3,7 +3,8 @@ import { FileIcon } from "@radix-ui/react-icons";
 import Papa from "papaparse";
 import { pinata } from "@/Constants/pinata";
 import {useConnect, useAccount, useWriteContract} from "wagmi";
-// import { motion } from "framer-motion";
+
+import { motion } from "framer-motion";
 import { coinbaseWallet } from 'wagmi/connectors';
 import { base, baseSepolia } from 'wagmi/chains';
 import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
@@ -11,8 +12,7 @@ import { useMintifyContext } from "../../Context/mintifyContext";
 
 
 export default function Mint() {
-
-  const {connectAsync } = useConnect();
+   const {connectAsync } = useConnect();
   const { address } = useMintifyContext();
   const { writeContractAsync } = useWriteContract();
 
@@ -27,7 +27,6 @@ export default function Mint() {
 
   
 
-  
   
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -58,6 +57,7 @@ export default function Mint() {
         break;
     }
   };
+  
 
   const uploadImageToIPFS = async () => {
     if (!imageFile) {
@@ -74,6 +74,8 @@ export default function Mint() {
     const response = await pinata.upload.file(file);
     return response.IpfsHash;
   };
+
+  
 
   const handleProcessCsv = () => {
     return new Promise((resolve, reject) => {
@@ -108,6 +110,9 @@ export default function Mint() {
     return tree.root;
   };
   
+  
+  
+
 
 const handleSubmit = async (event) => {
   event.preventDefault();
@@ -258,6 +263,7 @@ const handleSubmit = async (event) => {
 
   setLoading(false);
 };
+
 
   return (
     <div className="">

@@ -1,6 +1,6 @@
 import { useAvatar, useName } from '@coinbase/onchainkit/identity';
 import { createContext, useContext } from "react";
-import { base, baseSepolia } from 'wagmi/chains';
+import { baseSepolia } from 'wagmi/chains';
 import { setOnchainKitConfig } from "@coinbase/onchainkit";
 import { useAccount } from "wagmi";
 
