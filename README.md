@@ -1,4 +1,4 @@
-# MINTIFY: Empowering Communities, Celebrating Achievements!
+# MINTIFY: Empowering Communities, Celebrating Achievements!!
 
 MINTIFY is an innovative platform that leverages blockchain technology to provide community leaders, event organizers, and institutions with an easy way to mint certificates, awards, and event tickets as NFTs. The platform simplifies the process of issuing digital credentials, helping users to reward achievements, recognize milestones, and ensure the authenticity of awards.
 
