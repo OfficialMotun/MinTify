@@ -94,9 +94,23 @@ export default function Hero() {
 
           </div>
 
-          <div className="pb-[40px]">
-            <Image src="/certificate.png" alt="hero" width={1180} height={326} />
-          </div>
+          <motion.div
+            drag
+            dragConstraints={{
+              top: -50,
+              left: -50,
+              right: 50,
+              bottom: 50,
+            }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            transition={{
+              ease: [0.17, 0.67, 0.83, 0.67],
+              duration: 2,
+              x: { duration: 1 },
+            }} className="pb-[40px]">
+            <Image src="/certificate.png" alt="hero" width={880} height={326} />
+          </motion.div>
         </div>
 
 
