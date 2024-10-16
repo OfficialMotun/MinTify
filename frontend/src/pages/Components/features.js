@@ -1,4 +1,5 @@
 import Image from "next/image";
+import {motion} from "framer-motion";
 
 export default function Features() {
     return (
@@ -9,7 +10,7 @@ export default function Features() {
           <h1 className="text-center text-white font-extrabold text-[36px] sm:text-[42px] pb-[30px]">FEATURES</h1>
 
           {/* first */}
-         <div className="sm:flex justify-around pb-[150px]  space-y-[50px] sm:space-x-[100px]">
+         <motion.div className="sm:flex justify-around pb-[150px]  space-y-[50px] sm:space-x-[100px]">
          <Image src="/img1.png" alt="img" width={1180} height={326} />
 
           <div className="grid text-center sm:text-left">
@@ -17,7 +18,7 @@ export default function Features() {
             <p className="text-[15px] sm:text-[20px] text-[#b2b0c6] font-normal">The platform is built entirely on the Base blockchain, ensuring decentralisation and transparency. All transactions, from eligibility verification to minting, are handled onchain via smart contracts, eliminating manual interventions.</p>
           </div>
 
-         </div>
+         </motion.div>
 
          {/* second */}
 

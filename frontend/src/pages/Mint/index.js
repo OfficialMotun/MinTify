@@ -22,10 +22,12 @@ export default function Mint() {
   const [csvFile, setCsvFile] = useState("");
   const [csvFileName, setCsvFileName] = useState("");
   const [imageFile, setImageFile] = useState(null);
-  const [merkleRoot, setMerkleRoot] = useState(null);
+  const [merkleRoot, setMerkleRoot] = useState(null); // To store the generated Merkle root
 
+  
 
-
+  
+  
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -92,7 +94,6 @@ export default function Mint() {
   };
 
 
-
   const generateMerkleRoot = (values) => {
      const formattedValues = values
     .filter((row) => row["Wallet Address"] && row["Wallet Address"].trim() !== "") // Ensure valid address exists
@@ -105,103 +106,49 @@ export default function Mint() {
     console.log("Generated Merkle Root:", tree.root);
     return tree.root;
   };
-
   
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+const handleSubmit = async (event) => {
+  event.preventDefault();
+  setLoading(true);
+  
+  console.log("Form submitted with the following details:");
+  console.log("Image file:", fileName);
+  console.log("CSV file:", csvFileName);
+  console.log("Tag:", tag);
+  console.log("Community-specific information:", info);
 
-    setLoading(true);
-    
-    console.log("Form submitted with the following details:");
-    console.log("Image file:", fileName);
-    console.log("CSV file:", csvFileName);
-    console.log("Tag:", tag);
-    console.log("Community-specific information:", info);
+  try {
 
-    try {
+    if(!address){ 
+      await connectAsync({chainId: baseSepolia.id, connector: coinbaseWallet({appName: 'Mintify'})});
+    }
 
-      if(!address){ 
-        await connectAsync({chainId: baseSepolia.id, connector: coinbaseWallet({appName: 'Mintify'})});
-      }
+    // Step 1: Upload image to IPFS
+    const imageCID = await uploadImageToIPFS();
+    console.log("Image uploaded to IPFS with CID:", imageCID);
 
-      // Upload image to IPFS
-      const imageCID = await uploadImageToIPFS();
-      console.log("Image uploaded to IPFS with CID:", imageCID);
+    // Create IPFS URL for the image
+    const imageUrl = `https://ipfs.io/ipfs/${imageCID}`;
 
-      // Create IPFS URL for the image
-      const imageUrl = `https://ipfs.io/ipfs/${imageCID}`;
+    // Step 2: Process the CSV file
+    const processedCsv = await handleProcessCsv();
 
-      
-      const merkleRoot = generateMerkleRoot(csvFile);
-      setMerkleRoot(merkleRoot);
+    const merkleRoot = generateMerkleRoot(processedCsv); // Generate Merkle root
+    setMerkleRoot(merkleRoot);
 
-      console.log("Merkle Root generated:", merkleRoot);
+    console.log("Merkle Root generated:", merkleRoot);
 
-      
-      /// 
-      const data = await writeContractAsync({
-        chainId: baseSepolia.id,
-        address: '0x798bb21202a27f0A45806ba3C4D4f87cba3DC259',
-        functionName: 'createMintify',
-        abi: [{
-          "inputs": [
-              {
-                  "internalType": "address",
-                  "name": "_owner",
-                  "type": "address"
-              },
-              {
-                  "internalType": "string",
-                  "name": "name",
-                  "type": "string"
-              },
-              {
-                  "internalType": "string",
-                  "name": "symbol",
-                  "type": "string"
-              },
-              {
-                  "internalType": "bytes32",
-                  "name": "merkleRoot",
-                  "type": "bytes32"
-              },
-              {
-                  "internalType": "string",
-                  "name": "CsvCid",
-                  "type": "string"
-              }
-          ],
-          "name": "createMintify",
-          "outputs": [
-              {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-              }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-      }],
-      args: [
-        address,
-        tag,
-        info,      
-        merkleRoot,
-        csvUri   
-      ],
-      })
-
-      console.log("data", data)
-
-      
-      // Add image URL to each array
-      const csvWithImage = processedCsv.map(row => ({
-        ...row,
+    // Step 3: Process each CSV row, upload metadata, and add Token URI to each row
+    const updatedCsv = [];
+    for (let i = 0; i < processedCsv.length; i++) {
+      const row = processedCsv[i];
+  
+      // Create metadata for each recipient
+      const metadata = {
         name: `${row.Name}'s NFT Certificate`,  // NFT title
         description: `Award for ${row.Name}`,    // Description of the NFT
         image: imageUrl,  // IPFS URL for the image
-        
         attributes: [     // Optional: include attributes
           {
             trait_type: "Recipient Name",
@@ -212,39 +159,104 @@ export default function Mint() {
             value: row["Wallet Address"]
           }
         ]
+      };
 
-      }));
-
-
-
-
-
-
-      console.log("Processed CSV data with image URL:", csvWithImage);
-
-      // Prepare JSON data for upload
+      // Upload the metadata to Pinata
       const jsonData = {
-        pinataContent: csvWithImage,
+        pinataContent: metadata,
         pinataMetadata: {
-          name: tag,
-          description: info,
+          name: `${row.Name}-nft-metadata`,
+          description: `Metadata for ${row.Name}'s NFT`,
         },
       };
 
-  
       const jsonUploadResult = await pinata.upload.json(jsonData);
-      const JsonUrl = `https://ipfs.io/ipfs/${jsonUploadResult.IpfsHash}`;
-      console.log("JSON data uploaded to IPFS with CID:", JsonUrl);
-
-
+      const metadataCID = jsonUploadResult.IpfsHash;
+      const tokenURI = `https://ipfs.io/ipfs/${metadataCID}`;
+  
+      console.log(`Metadata for ${row.Name} uploaded to IPFS with CID: ${metadataCID}`);
       
-
-    } catch (error) {
-      console.error("Error processing and uploading data:", error);
+      // Add Token URI to the CSV row
+      updatedCsv.push({
+        ...row,
+        TokenURI: tokenURI
+      });
     }
 
-    setLoading(false);
-  };
+    console.log("Updated CSV with Token URIs:", updatedCsv);
+
+    // Step 4: Convert the updated CSV data back to a CSV format
+    const updatedCsvString = Papa.unparse(updatedCsv);
+
+    // Step 5: Upload the updated CSV to Pinata
+    const updatedCsvFile = new Blob([updatedCsvString], { type: "text/csv" });
+    const csvUploadResult = await pinata.upload.file(updatedCsvFile);
+    const csvUri = `https://ipfs.io/ipfs/${csvUploadResult.IpfsHash}`;
+    
+    console.log("Updated CSV uploaded to IPFS with URI:", csvUri);
+
+    const data = await writeContractAsync({
+      chainId: baseSepolia.id,
+      address: '0x798bb21202a27f0A45806ba3C4D4f87cba3DC259',
+      functionName: 'createMintify',
+      abi: [{
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_owner",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "symbol",
+                "type": "string"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "merkleRoot",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "string",
+                "name": "CsvCid",
+                "type": "string"
+            }
+        ],
+        "name": "createMintify",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }],
+    args: [
+      address,
+      tag,
+      info,      
+      merkleRoot,
+      csvUri   
+    ],
+    })
+
+    console.log("data", data)
+    alert(`Transaction submitted: ${data}`); //alert of the tx hash
+
+
+  } catch (error) {
+    console.error("Error processing and uploading data:", error);
+  }
+
+  setLoading(false);
+};
 
 
   return (
