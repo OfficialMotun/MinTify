@@ -17,7 +17,9 @@ export default function NavBar() {
 
 
   return (
-    <div  className="bg-[#17123d] relative " style={{ backgroundImage: "url('Desktop.png')" }} >
+
+    <div className="bg-gradient-to-t from-[#191c62] to-[#444798] relative ">
+
       {/* NavBar */}
       <div className=" px-[50px] sm:px-[100px] py-[40px] flex justify-between">
         <div>

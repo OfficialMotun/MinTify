@@ -127,8 +127,10 @@ export default function Eligibility() {
   }
 
   return (
-    <div className="">
-      <div className="bg-[#17123d] relative brightness-150 bg-blend-hue" style={{ backgroundImage: "url('cover.png')" }}>
+
+    <div className="bg-[#131c61]">
+      <div className="relative" style={{ backgroundImage: "url('bgDesk.png')" }}>
+
       {/* Hero */}
       <div className="px-[50px] py-[50px]  text-center sm:px-[100px]"  >
         
@@ -155,7 +157,7 @@ export default function Eligibility() {
             className="block text-white sm:text-[20px] pb-2 font-semibold leading-snug"
             htmlFor="address"
           >
-            Contract Address
+            Mint Hash
           </label>
           <input
             className="border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-lg"
@@ -164,7 +166,7 @@ export default function Eligibility() {
             name="address"
             value={address}
             onChange={handleChange}
-            placeholder="Enter the contract address"
+            placeholder="Enter your mint hash"
           />
         </div>
         <div className="bg-[#8080d7] px-5 py-2.5 rounded-full justify-center items-center gap-2 inline-flex">
