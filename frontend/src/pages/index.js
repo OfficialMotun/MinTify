@@ -1,16 +1,13 @@
-import { useRef, useCallback } from "react";
 import Hero from "./Components/hero";
 import Features from "./Components/features";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import HowTo from "./Components/howto";
 
+
 export default function Home() {
-  const hero = useRef(null);
-  const features = useRef(null);
-
-
   return (
+
     <div className="">
       <ToastContainer />
       <div>
@@ -22,7 +19,9 @@ export default function Home() {
         <section id="features">
           <Features />
           </section>
+
       </div>
+      
     </div>
   );
 }

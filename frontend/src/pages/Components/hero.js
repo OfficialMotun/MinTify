@@ -1,17 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useMintifyContext } from "../../Context/mintifyContext";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { motion } from "framer-motion";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Hero() {
   const { address } = useMintifyContext();
-
+ 
   const handleButtonMint = (e) => {
     if (!address) {
       e.preventDefault();
-      toast.error("Please connect your wallet first!", {
+      toast.error('Please connect your wallet first!', {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -25,7 +24,7 @@ export default function Hero() {
   const handleButtonEligibility = (e) => {
     if (!address) {
       e.preventDefault();
-      toast.error("Please connect your wallet first!", {
+      toast.error('Please connect your wallet first!', {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -37,6 +36,7 @@ export default function Hero() {
   };
 
   return (
+
     <div >
       {/* Hero */}
       <div className="relative" style={{ backgroundImage: "url('bgDesk.png')" }}>
@@ -90,32 +90,14 @@ export default function Hero() {
 
              
             </div>
+
           </div>
 
-          <motion.div
-            drag
-            dragConstraints={{
-              top: -50,
-              left: -50,
-              right: 50,
-              bottom: 50,
-            }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            transition={{
-              ease: [0.17, 0.67, 0.83, 0.67],
-              duration: 2,
-              x: { duration: 1 },
-            }}
-
-            className="pt-[10px]"
-          >
-              <Image src="/design.png" alt="image"   width={880} height={326} />
-          </motion.div>
-
-
-         
+          <div className="pb-[40px]">
+            <Image src="/certificate.png" alt="hero" width={1180} height={326} />
+          </div>
         </div>
+
 
          {/* <motion.div
             drag
@@ -141,6 +123,7 @@ export default function Hero() {
               height={326}
             />
           </motion.div> */}
+
       </div>
       <ToastContainer />
     </div>
