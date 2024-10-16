@@ -248,9 +248,9 @@ export default function Mint() {
 
 
   return (
-    <div className="">
+    <div className="bg-[#131c61]">
       <div
-        className="bg-[#131c61] relative brightness-150 bg-blend-hue"
+        className="relative" style={{ backgroundImage: "url('bgDesk.png')" }}
       >
         {/* Hero */}
         <div className="px-[50px] py-[50px]  text-center sm:px-[100px]">
@@ -267,7 +267,7 @@ export default function Mint() {
         </div>
       </div>
 
-      <h2 className="font-semibold	text-[36px] text-center py-[100px]">Mint</h2>
+      <h2 className="font-semibold	text-[36px] text-center py-[100px]">Mint NFT</h2>
 
       <div className="w-full max-w-4xl mx-auto items-center justify-center flex flex-col pb-5">
         <form
@@ -317,7 +317,7 @@ export default function Mint() {
               className="block text-white sm:text-[20px] pb-2 font-semibold leading-snug"
               htmlFor="address"
             >
-              Details in a CSV file
+              Recipients Details in a CSV file
             </label>
             <label
               htmlFor="csv-upload"
@@ -325,7 +325,7 @@ export default function Mint() {
             >
               <div className="flex items-center">
                 <FileIcon className="w-5 h-5 mr-2" />
-                <span className="text-sm font-semibold">CSV File</span>
+                <span className="text-sm font-semibold">Upload File</span>
               </div>
               <span className="text-sm font-semibold">
                 {csvFileName || "Select file"}
@@ -347,8 +347,7 @@ export default function Mint() {
               className="block text-[#b4b5be] sm:text-[13px] pb-2 font-semibold leading-snug"
               htmlFor="address"
             >
-              This file should contain the full names of the recipients (first &
-              last name)and their wallet addresses
+              This file should contain the full names of the recipients  (first & last name)and their wallet addresses
             </label>
           </div>
 
@@ -385,7 +384,7 @@ export default function Mint() {
               name="info"
               value={info}
               onChange={handleChange}
-              placeholder="e.g., course name, award type, etc."
+              placeholder="e.g., course name, award type"
             />
           </div>
 

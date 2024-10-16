@@ -40,13 +40,12 @@ export default function App({ Component, pageProps }) {
           chain={baseSepolia}
         >
           <MintifyProvider>
-          <div className={`playfair.className bg-[#17123d]`}>
-            <NavBar />
-            <Component {...pageProps} />
-            <Footer />
-          </div>
+            <div className={`${playfair.className} bg-[#17123d]`}>
+              <NavBar />
+              <Component {...pageProps} />
+              <Footer />
+            </div>
           </MintifyProvider>
-
         </OnchainKitProvider>
       </WagmiProvider>
     </QueryClientProvider>

@@ -24,10 +24,10 @@ export default function Features() {
   
 
     return (
-      <div className=" px-[50px] sm:px-[100px] bg-[#131c61]">
+      <div className=" px-[50px] sm:px-[100px] bg-[#131c61] pb-[50px]">
         {/* Hero */}
-        <div className="">
-          <h1 className="text-center text-white font-extrabold text-[36px] sm:text-[52px] py-[100px]">Features</h1>
+        <div className="bg-white/5 rounded-lg p-[50px] border border-[#4d52a0] ">
+          <h1 className="text-center text-white font-extrabold text-[36px] sm:text-[42px] pb-[30px]">FEATURES</h1>
           
           {/* first */}
           {/* <AnimatedSection> */}
@@ -82,7 +82,7 @@ export default function Features() {
 
          <div className="grid text-center sm:text-left py-[50px]">
            <h3 className="font-semibold text-[20px] text-left text-white sm:text-[32px] pb-[10px]">Streamlined Recipient Experience</h3>
-           <p className="text-[15px] sm:text-[20px] text-left text-[#b2b0c6]  font-normal">For recipients, the claiming process is user-friendly and intuitive. They simply check their eligibility, and if eligible, mint the NFT with one click. Wallet integration is simplified by supporting popular options like MetaMask and WalletConnect. </p>
+           <p className="text-[15px] sm:text-[20px] text-left text-[#b2b0c6]  font-normal">For recipients, the claiming process is user-friendly and intuitive. They simply check their eligibility, and if eligible, mint the NFT with one click. Wallet integration is simplified by supporting popular options like MetaMask and WalletConnect.</p>
          </div>
 
          <Image src="/img4.png" alt="img" width={1080} height={326} />

@@ -37,14 +37,16 @@ export default function Hero() {
   };
 
   return (
-    <div className="bg-[#131c61]">
+    <div >
       {/* Hero */}
-      <div className="px-[50px] text-center sm:px-[100px]">
-        <div className="sm:flex pb-[70px]">
+      <div className="relative" style={{ backgroundImage: "url('bgDesk.png')" }}>
+       
+       
+        <div className="px-[50px] sm:px-[100px] sm:flex pb-[70px]">
           <div>
-            <div className="">
-              <h1 className="pt-[10px] text-start text-[45px] sm:text-[60px] font-extrabold">
-                 Empowering Communities, Celebrating Achievements!
+            <div className="pt-[10px] ">
+              <h1 className="text-start text-[45px] sm:text-[60px] font-extrabold">
+                <span className="text-white">Empowering Communities, </span><span className="text-[#d2d7ff]">Celebrating Achievements!</span>
               </h1>
               
 
@@ -62,7 +64,7 @@ export default function Hero() {
                       onClick={handleButtonMint}
                       className="rounded-full bg-[#8381d5]  px-4 py-3"
                     >
-                      Mint
+                      Mint NFT
                     </button>
                   </motion.div>
                 </Link>
@@ -115,7 +117,7 @@ export default function Hero() {
          
         </div>
 
-         <motion.div
+         {/* <motion.div
             drag
             dragConstraints={{
               top: -50,
@@ -138,7 +140,7 @@ export default function Hero() {
               width={1180}
               height={326}
             />
-          </motion.div>
+          </motion.div> */}
       </div>
       <ToastContainer />
     </div>
