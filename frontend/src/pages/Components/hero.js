@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useMintifyContext } from "../../Context/mintifyContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { motion } from "framer-motion";
 
 export default function Hero() {
   const { address } = useMintifyContext();
