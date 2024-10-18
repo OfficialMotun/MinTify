@@ -1,14 +1,16 @@
 import Image from "next/image";
+import {motion} from "framer-motion";
 
 export default function Features() {
     return (
-      <div className=" px-[50px] sm:px-[100px] bg-[#0b0c13]">
+
+      <div className=" px-[50px] sm:px-[100px] bg-[#131c61] pb-[50px]">
         {/* Hero */}
-        <div className="">
-          <h1 className="text-center font-extrabold text-[36px] sm:text-[52px] py-[100px]">Features</h1>
-          
+        <div className="bg-white/5 rounded-lg p-[50px] border border-[#4d52a0] ">
+          <h1 className="text-center text-white font-extrabold text-[36px] sm:text-[42px] pb-[30px]">FEATURES</h1>
+
           {/* first */}
-         <div className="sm:flex justify-around pb-[150px]  space-y-[50px] sm:space-x-[100px]">
+         <motion.div className="sm:flex justify-around pb-[150px]  space-y-[50px] sm:space-x-[100px]">
          <Image src="/img1.png" alt="img" width={1180} height={326} />
 
           <div className="grid text-center sm:text-left">
@@ -16,7 +18,7 @@ export default function Features() {
             <p className="text-[15px] sm:text-[20px] text-[#b2b0c6] font-normal">The platform is built entirely on the Base blockchain, ensuring decentralisation and transparency. All transactions, from eligibility verification to minting, are handled onchain via smart contracts, eliminating manual interventions.</p>
           </div>
 
-         </div>
+         </motion.div>
 
          {/* second */}
 
@@ -49,8 +51,10 @@ export default function Features() {
          
 
          <div className="grid text-center sm:text-left py-[50px]">
-           <h3 className="font-semibold text-[20px] sm:text-[32px] pb-[10px]">Streamlined Recipient Experience</h3>
-           <p className="text-[15px] sm:text-[20px] text-[#b2b0c6]  font-normal"> For recipients, the claiming process is user-friendly and intuitive. They simply check their eligibility, and if eligible, mint the NFT with one click. Wallet integration is simplified by supporting popular options like MetaMask and WalletConnect.</p>
+
+           <h3 className="font-semibold text-[20px] text-left text-white sm:text-[32px] pb-[10px]">Streamlined Recipient Experience</h3>
+           <p className="text-[15px] sm:text-[20px] text-left text-[#b2b0c6]  font-normal">For recipients, the claiming process is user-friendly and intuitive. They simply check their eligibility, and if eligible, mint the NFT with one click. Wallet integration is simplified by supporting popular options like MetaMask and WalletConnect.</p>
+
          </div>
 
          <Image src="/img4.png" alt="img" width={1180} height={326} />

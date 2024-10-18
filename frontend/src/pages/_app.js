@@ -28,6 +28,7 @@ const wagmiConfig = createConfig({
   transports: {
     [baseSepolia.id]: http(),
   },
+  ssr: true,
 });
 
 export default function App({ Component, pageProps }) {
@@ -39,13 +40,14 @@ export default function App({ Component, pageProps }) {
           chain={baseSepolia}
         >
           <MintifyProvider>
-          <div className={playfair.className}>
-            <NavBar />
-            <Component {...pageProps} />
-            <Footer />
-          </div>
-          </MintifyProvider>
 
+            <div className={`${playfair.className} bg-[#17123d]`}>
+              <NavBar />
+              <Component {...pageProps} />
+              <Footer />
+            </div>
+
+          </MintifyProvider>
         </OnchainKitProvider>
       </WagmiProvider>
     </QueryClientProvider>
